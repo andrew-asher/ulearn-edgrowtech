@@ -33,6 +33,7 @@ import { Route as AdminStudentsStudentIdRouteImport } from './routes/admin.stude
 import { Route as StudyAlStreamIndexRouteImport } from './routes/study.al.$stream.index'
 import { Route as StudyAlStreamSubjectRouteImport } from './routes/study.al.$stream.$subject'
 import { Route as StudyAlStreamSubjectIndexRouteImport } from './routes/study.al.$stream.$subject.index'
+import { Route as StudyAlStreamSubjectPastPapersRouteImport } from './routes/study.al.$stream.$subject.past-papers'
 import { Route as AdminSubjectsSubjectIdPapersPaperIdRouteImport } from './routes/admin.subjects.$subjectId.papers.$paperId'
 import { Route as StudyAlStreamSubjectPastPapersIndexRouteImport } from './routes/study.al.$stream.$subject.past-papers.index'
 import { Route as StudyAlStreamSubjectPastPapersYearRouteImport } from './routes/study.al.$stream.$subject.past-papers.$year'
@@ -158,6 +159,12 @@ const StudyAlStreamSubjectIndexRoute =
     path: '/',
     getParentRoute: () => StudyAlStreamSubjectRoute,
   } as any)
+const StudyAlStreamSubjectPastPapersRoute =
+  StudyAlStreamSubjectPastPapersRouteImport.update({
+    id: '/past-papers',
+    path: '/past-papers',
+    getParentRoute: () => StudyAlStreamSubjectRoute,
+  } as any)
 const AdminSubjectsSubjectIdPapersPaperIdRoute =
   AdminSubjectsSubjectIdPapersPaperIdRouteImport.update({
     id: '/papers/$paperId',
@@ -166,15 +173,15 @@ const AdminSubjectsSubjectIdPapersPaperIdRoute =
   } as any)
 const StudyAlStreamSubjectPastPapersIndexRoute =
   StudyAlStreamSubjectPastPapersIndexRouteImport.update({
-    id: '/past-papers/',
-    path: '/past-papers/',
-    getParentRoute: () => StudyAlStreamSubjectRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => StudyAlStreamSubjectPastPapersRoute,
   } as any)
 const StudyAlStreamSubjectPastPapersYearRoute =
   StudyAlStreamSubjectPastPapersYearRouteImport.update({
-    id: '/past-papers/$year',
-    path: '/past-papers/$year',
-    getParentRoute: () => StudyAlStreamSubjectRoute,
+    id: '/$year',
+    path: '/$year',
+    getParentRoute: () => StudyAlStreamSubjectPastPapersRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -202,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
   '/study/al/$stream/': typeof StudyAlStreamIndexRoute
   '/admin/subjects/$subjectId/papers/$paperId': typeof AdminSubjectsSubjectIdPapersPaperIdRoute
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRouteWithChildren
   '/study/al/$stream/$subject/': typeof StudyAlStreamSubjectIndexRoute
   '/study/al/$stream/$subject/past-papers/$year': typeof StudyAlStreamSubjectPastPapersYearRoute
   '/study/al/$stream/$subject/past-papers/': typeof StudyAlStreamSubjectPastPapersIndexRoute
@@ -256,6 +264,7 @@ export interface FileRoutesById {
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
   '/study/al/$stream/': typeof StudyAlStreamIndexRoute
   '/admin/subjects/$subjectId/papers/$paperId': typeof AdminSubjectsSubjectIdPapersPaperIdRoute
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRouteWithChildren
   '/study/al/$stream/$subject/': typeof StudyAlStreamSubjectIndexRoute
   '/study/al/$stream/$subject/past-papers/$year': typeof StudyAlStreamSubjectPastPapersYearRoute
   '/study/al/$stream/$subject/past-papers/': typeof StudyAlStreamSubjectPastPapersIndexRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/study/al/$stream/$subject'
     | '/study/al/$stream/'
     | '/admin/subjects/$subjectId/papers/$paperId'
+    | '/study/al/$stream/$subject/past-papers'
     | '/study/al/$stream/$subject/'
     | '/study/al/$stream/$subject/past-papers/$year'
     | '/study/al/$stream/$subject/past-papers/'
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/study/al/$stream/$subject'
     | '/study/al/$stream/'
     | '/admin/subjects/$subjectId/papers/$paperId'
+    | '/study/al/$stream/$subject/past-papers'
     | '/study/al/$stream/$subject/'
     | '/study/al/$stream/$subject/past-papers/$year'
     | '/study/al/$stream/$subject/past-papers/'
@@ -527,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudyAlStreamSubjectIndexRouteImport
       parentRoute: typeof StudyAlStreamSubjectRoute
     }
+    '/study/al/$stream/$subject/past-papers': {
+      id: '/study/al/$stream/$subject/past-papers'
+      path: '/past-papers'
+      fullPath: '/study/al/$stream/$subject/past-papers'
+      preLoaderRoute: typeof StudyAlStreamSubjectPastPapersRouteImport
+      parentRoute: typeof StudyAlStreamSubjectRoute
+    }
     '/admin/subjects/$subjectId/papers/$paperId': {
       id: '/admin/subjects/$subjectId/papers/$paperId'
       path: '/papers/$paperId'
@@ -536,17 +554,17 @@ declare module '@tanstack/react-router' {
     }
     '/study/al/$stream/$subject/past-papers/': {
       id: '/study/al/$stream/$subject/past-papers/'
-      path: '/past-papers'
+      path: '/'
       fullPath: '/study/al/$stream/$subject/past-papers/'
       preLoaderRoute: typeof StudyAlStreamSubjectPastPapersIndexRouteImport
-      parentRoute: typeof StudyAlStreamSubjectRoute
+      parentRoute: typeof StudyAlStreamSubjectPastPapersRoute
     }
     '/study/al/$stream/$subject/past-papers/$year': {
       id: '/study/al/$stream/$subject/past-papers/$year'
-      path: '/past-papers/$year'
+      path: '/$year'
       fullPath: '/study/al/$stream/$subject/past-papers/$year'
       preLoaderRoute: typeof StudyAlStreamSubjectPastPapersYearRouteImport
-      parentRoute: typeof StudyAlStreamSubjectRoute
+      parentRoute: typeof StudyAlStreamSubjectPastPapersRoute
     }
   }
 }
@@ -610,18 +628,33 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface StudyAlStreamSubjectRouteChildren {
-  StudyAlStreamSubjectIndexRoute: typeof StudyAlStreamSubjectIndexRoute
+interface StudyAlStreamSubjectPastPapersRouteChildren {
   StudyAlStreamSubjectPastPapersYearRoute: typeof StudyAlStreamSubjectPastPapersYearRoute
   StudyAlStreamSubjectPastPapersIndexRoute: typeof StudyAlStreamSubjectPastPapersIndexRoute
 }
 
+const StudyAlStreamSubjectPastPapersRouteChildren: StudyAlStreamSubjectPastPapersRouteChildren =
+  {
+    StudyAlStreamSubjectPastPapersYearRoute:
+      StudyAlStreamSubjectPastPapersYearRoute,
+    StudyAlStreamSubjectPastPapersIndexRoute:
+      StudyAlStreamSubjectPastPapersIndexRoute,
+  }
+
+const StudyAlStreamSubjectPastPapersRouteWithChildren =
+  StudyAlStreamSubjectPastPapersRoute._addFileChildren(
+    StudyAlStreamSubjectPastPapersRouteChildren,
+  )
+
+interface StudyAlStreamSubjectRouteChildren {
+  StudyAlStreamSubjectPastPapersRoute: typeof StudyAlStreamSubjectPastPapersRouteWithChildren
+  StudyAlStreamSubjectIndexRoute: typeof StudyAlStreamSubjectIndexRoute
+}
+
 const StudyAlStreamSubjectRouteChildren: StudyAlStreamSubjectRouteChildren = {
+  StudyAlStreamSubjectPastPapersRoute:
+    StudyAlStreamSubjectPastPapersRouteWithChildren,
   StudyAlStreamSubjectIndexRoute: StudyAlStreamSubjectIndexRoute,
-  StudyAlStreamSubjectPastPapersYearRoute:
-    StudyAlStreamSubjectPastPapersYearRoute,
-  StudyAlStreamSubjectPastPapersIndexRoute:
-    StudyAlStreamSubjectPastPapersIndexRoute,
 }
 
 const StudyAlStreamSubjectRouteWithChildren =
