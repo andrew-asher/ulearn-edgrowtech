@@ -16,6 +16,7 @@ import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudyIndexRouteImport } from './routes/study.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as StudyAlRouteImport } from './routes/study.al'
 import { Route as InteractivePaperIdRouteImport } from './routes/interactive.$paperId'
@@ -27,8 +28,11 @@ import { Route as AdminPapersRouteImport } from './routes/admin.papers'
 import { Route as AdminDownloadsRouteImport } from './routes/admin.downloads'
 import { Route as AdminBookmarksRouteImport } from './routes/admin.bookmarks'
 import { Route as AdminAiLogsRouteImport } from './routes/admin.ai-logs'
+import { Route as StudyAlIndexRouteImport } from './routes/study.al.index'
 import { Route as StudyAlStreamRouteImport } from './routes/study.al.$stream'
+import { Route as StudyAlStreamIndexRouteImport } from './routes/study.al.$stream.index'
 import { Route as StudyAlStreamSubjectRouteImport } from './routes/study.al.$stream.$subject'
+import { Route as StudyAlStreamSubjectIndexRouteImport } from './routes/study.al.$stream.$subject.index'
 import { Route as StudyAlStreamSubjectPastPapersRouteImport } from './routes/study.al.$stream.$subject.past-papers'
 
 const StudyRoute = StudyRouteImport.update({
@@ -65,6 +69,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const StudyIndexRoute = StudyIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudyRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -121,16 +130,32 @@ const AdminAiLogsRoute = AdminAiLogsRouteImport.update({
   path: '/ai-logs',
   getParentRoute: () => AdminRoute,
 } as any)
+const StudyAlIndexRoute = StudyAlIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudyAlRoute,
+} as any)
 const StudyAlStreamRoute = StudyAlStreamRouteImport.update({
   id: '/$stream',
   path: '/$stream',
   getParentRoute: () => StudyAlRoute,
+} as any)
+const StudyAlStreamIndexRoute = StudyAlStreamIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudyAlStreamRoute,
 } as any)
 const StudyAlStreamSubjectRoute = StudyAlStreamSubjectRouteImport.update({
   id: '/$subject',
   path: '/$subject',
   getParentRoute: () => StudyAlStreamRoute,
 } as any)
+const StudyAlStreamSubjectIndexRoute =
+  StudyAlStreamSubjectIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => StudyAlStreamSubjectRoute,
+  } as any)
 const StudyAlStreamSubjectPastPapersRoute =
   StudyAlStreamSubjectPastPapersRouteImport.update({
     id: '/past-papers',
@@ -157,9 +182,13 @@ export interface FileRoutesByFullPath {
   '/interactive/$paperId': typeof InteractivePaperIdRoute
   '/study/al': typeof StudyAlRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/study/': typeof StudyIndexRoute
   '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/': typeof StudyAlIndexRoute
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/': typeof StudyAlStreamIndexRoute
   '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
+  '/study/al/$stream/$subject/': typeof StudyAlStreamSubjectIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -167,7 +196,6 @@ export interface FileRoutesByTo {
   '/bookmarks': typeof BookmarksRoute
   '/contact': typeof ContactRoute
   '/profile': typeof ProfileRoute
-  '/study': typeof StudyRouteWithChildren
   '/admin/ai-logs': typeof AdminAiLogsRoute
   '/admin/bookmarks': typeof AdminBookmarksRoute
   '/admin/downloads': typeof AdminDownloadsRoute
@@ -177,11 +205,12 @@ export interface FileRoutesByTo {
   '/admin/streams': typeof AdminStreamsRoute
   '/admin/subjects': typeof AdminSubjectsRoute
   '/interactive/$paperId': typeof InteractivePaperIdRoute
-  '/study/al': typeof StudyAlRouteWithChildren
   '/admin': typeof AdminIndexRoute
-  '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
-  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study': typeof StudyIndexRoute
+  '/study/al': typeof StudyAlIndexRoute
+  '/study/al/$stream': typeof StudyAlStreamIndexRoute
   '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
+  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -203,9 +232,13 @@ export interface FileRoutesById {
   '/interactive/$paperId': typeof InteractivePaperIdRoute
   '/study/al': typeof StudyAlRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/study/': typeof StudyIndexRoute
   '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/': typeof StudyAlIndexRoute
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/': typeof StudyAlStreamIndexRoute
   '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
+  '/study/al/$stream/$subject/': typeof StudyAlStreamSubjectIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -228,9 +261,13 @@ export interface FileRouteTypes {
     | '/interactive/$paperId'
     | '/study/al'
     | '/admin/'
+    | '/study/'
     | '/study/al/$stream'
+    | '/study/al/'
     | '/study/al/$stream/$subject'
+    | '/study/al/$stream/'
     | '/study/al/$stream/$subject/past-papers'
+    | '/study/al/$stream/$subject/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -238,7 +275,6 @@ export interface FileRouteTypes {
     | '/bookmarks'
     | '/contact'
     | '/profile'
-    | '/study'
     | '/admin/ai-logs'
     | '/admin/bookmarks'
     | '/admin/downloads'
@@ -248,11 +284,12 @@ export interface FileRouteTypes {
     | '/admin/streams'
     | '/admin/subjects'
     | '/interactive/$paperId'
-    | '/study/al'
     | '/admin'
+    | '/study'
+    | '/study/al'
     | '/study/al/$stream'
-    | '/study/al/$stream/$subject'
     | '/study/al/$stream/$subject/past-papers'
+    | '/study/al/$stream/$subject'
   id:
     | '__root__'
     | '/'
@@ -273,9 +310,13 @@ export interface FileRouteTypes {
     | '/interactive/$paperId'
     | '/study/al'
     | '/admin/'
+    | '/study/'
     | '/study/al/$stream'
+    | '/study/al/'
     | '/study/al/$stream/$subject'
+    | '/study/al/$stream/'
     | '/study/al/$stream/$subject/past-papers'
+    | '/study/al/$stream/$subject/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -339,6 +380,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/study/': {
+      id: '/study/'
+      path: '/'
+      fullPath: '/study/'
+      preLoaderRoute: typeof StudyIndexRouteImport
+      parentRoute: typeof StudyRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -417,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAiLogsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/study/al/': {
+      id: '/study/al/'
+      path: '/'
+      fullPath: '/study/al/'
+      preLoaderRoute: typeof StudyAlIndexRouteImport
+      parentRoute: typeof StudyAlRoute
+    }
     '/study/al/$stream': {
       id: '/study/al/$stream'
       path: '/$stream'
@@ -424,12 +479,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudyAlStreamRouteImport
       parentRoute: typeof StudyAlRoute
     }
+    '/study/al/$stream/': {
+      id: '/study/al/$stream/'
+      path: '/'
+      fullPath: '/study/al/$stream/'
+      preLoaderRoute: typeof StudyAlStreamIndexRouteImport
+      parentRoute: typeof StudyAlStreamRoute
+    }
     '/study/al/$stream/$subject': {
       id: '/study/al/$stream/$subject'
       path: '/$subject'
       fullPath: '/study/al/$stream/$subject'
       preLoaderRoute: typeof StudyAlStreamSubjectRouteImport
       parentRoute: typeof StudyAlStreamRoute
+    }
+    '/study/al/$stream/$subject/': {
+      id: '/study/al/$stream/$subject/'
+      path: '/'
+      fullPath: '/study/al/$stream/$subject/'
+      preLoaderRoute: typeof StudyAlStreamSubjectIndexRouteImport
+      parentRoute: typeof StudyAlStreamSubjectRoute
     }
     '/study/al/$stream/$subject/past-papers': {
       id: '/study/al/$stream/$subject/past-papers'
@@ -469,10 +538,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface StudyAlStreamSubjectRouteChildren {
   StudyAlStreamSubjectPastPapersRoute: typeof StudyAlStreamSubjectPastPapersRoute
+  StudyAlStreamSubjectIndexRoute: typeof StudyAlStreamSubjectIndexRoute
 }
 
 const StudyAlStreamSubjectRouteChildren: StudyAlStreamSubjectRouteChildren = {
   StudyAlStreamSubjectPastPapersRoute: StudyAlStreamSubjectPastPapersRoute,
+  StudyAlStreamSubjectIndexRoute: StudyAlStreamSubjectIndexRoute,
 }
 
 const StudyAlStreamSubjectRouteWithChildren =
@@ -480,10 +551,12 @@ const StudyAlStreamSubjectRouteWithChildren =
 
 interface StudyAlStreamRouteChildren {
   StudyAlStreamSubjectRoute: typeof StudyAlStreamSubjectRouteWithChildren
+  StudyAlStreamIndexRoute: typeof StudyAlStreamIndexRoute
 }
 
 const StudyAlStreamRouteChildren: StudyAlStreamRouteChildren = {
   StudyAlStreamSubjectRoute: StudyAlStreamSubjectRouteWithChildren,
+  StudyAlStreamIndexRoute: StudyAlStreamIndexRoute,
 }
 
 const StudyAlStreamRouteWithChildren = StudyAlStreamRoute._addFileChildren(
@@ -492,10 +565,12 @@ const StudyAlStreamRouteWithChildren = StudyAlStreamRoute._addFileChildren(
 
 interface StudyAlRouteChildren {
   StudyAlStreamRoute: typeof StudyAlStreamRouteWithChildren
+  StudyAlIndexRoute: typeof StudyAlIndexRoute
 }
 
 const StudyAlRouteChildren: StudyAlRouteChildren = {
   StudyAlStreamRoute: StudyAlStreamRouteWithChildren,
+  StudyAlIndexRoute: StudyAlIndexRoute,
 }
 
 const StudyAlRouteWithChildren =
@@ -503,10 +578,12 @@ const StudyAlRouteWithChildren =
 
 interface StudyRouteChildren {
   StudyAlRoute: typeof StudyAlRouteWithChildren
+  StudyIndexRoute: typeof StudyIndexRoute
 }
 
 const StudyRouteChildren: StudyRouteChildren = {
   StudyAlRoute: StudyAlRouteWithChildren,
+  StudyIndexRoute: StudyIndexRoute,
 }
 
 const StudyRouteWithChildren = StudyRoute._addFileChildren(StudyRouteChildren)
@@ -524,3 +601,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
