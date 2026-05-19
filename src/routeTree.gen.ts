@@ -23,11 +23,7 @@ import { Route as InteractivePaperIdRouteImport } from './routes/interactive.$pa
 import { Route as AdminSubjectsRouteImport } from './routes/admin.subjects'
 import { Route as AdminStreamsRouteImport } from './routes/admin.streams'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
-import { Route as AdminQuestionsRouteImport } from './routes/admin.questions'
-import { Route as AdminPapersRouteImport } from './routes/admin.papers'
 import { Route as AdminDownloadsRouteImport } from './routes/admin.downloads'
-import { Route as AdminBookmarksRouteImport } from './routes/admin.bookmarks'
-import { Route as AdminAiLogsRouteImport } from './routes/admin.ai-logs'
 import { Route as StudyAlIndexRouteImport } from './routes/study.al.index'
 import { Route as StudyAlStreamRouteImport } from './routes/study.al.$stream'
 import { Route as StudyAlStreamIndexRouteImport } from './routes/study.al.$stream.index'
@@ -105,29 +101,9 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminQuestionsRoute = AdminQuestionsRouteImport.update({
-  id: '/questions',
-  path: '/questions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPapersRoute = AdminPapersRouteImport.update({
-  id: '/papers',
-  path: '/papers',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminDownloadsRoute = AdminDownloadsRouteImport.update({
   id: '/downloads',
   path: '/downloads',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBookmarksRoute = AdminBookmarksRouteImport.update({
-  id: '/bookmarks',
-  path: '/bookmarks',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAiLogsRoute = AdminAiLogsRouteImport.update({
-  id: '/ai-logs',
-  path: '/ai-logs',
   getParentRoute: () => AdminRoute,
 } as any)
 const StudyAlIndexRoute = StudyAlIndexRouteImport.update({
@@ -171,11 +147,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/profile': typeof ProfileRoute
   '/study': typeof StudyRouteWithChildren
-  '/admin/ai-logs': typeof AdminAiLogsRoute
-  '/admin/bookmarks': typeof AdminBookmarksRoute
   '/admin/downloads': typeof AdminDownloadsRoute
-  '/admin/papers': typeof AdminPapersRoute
-  '/admin/questions': typeof AdminQuestionsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/streams': typeof AdminStreamsRoute
   '/admin/subjects': typeof AdminSubjectsRoute
@@ -196,11 +168,7 @@ export interface FileRoutesByTo {
   '/bookmarks': typeof BookmarksRoute
   '/contact': typeof ContactRoute
   '/profile': typeof ProfileRoute
-  '/admin/ai-logs': typeof AdminAiLogsRoute
-  '/admin/bookmarks': typeof AdminBookmarksRoute
   '/admin/downloads': typeof AdminDownloadsRoute
-  '/admin/papers': typeof AdminPapersRoute
-  '/admin/questions': typeof AdminQuestionsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/streams': typeof AdminStreamsRoute
   '/admin/subjects': typeof AdminSubjectsRoute
@@ -221,11 +189,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/profile': typeof ProfileRoute
   '/study': typeof StudyRouteWithChildren
-  '/admin/ai-logs': typeof AdminAiLogsRoute
-  '/admin/bookmarks': typeof AdminBookmarksRoute
   '/admin/downloads': typeof AdminDownloadsRoute
-  '/admin/papers': typeof AdminPapersRoute
-  '/admin/questions': typeof AdminQuestionsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/streams': typeof AdminStreamsRoute
   '/admin/subjects': typeof AdminSubjectsRoute
@@ -250,11 +214,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/profile'
     | '/study'
-    | '/admin/ai-logs'
-    | '/admin/bookmarks'
     | '/admin/downloads'
-    | '/admin/papers'
-    | '/admin/questions'
     | '/admin/settings'
     | '/admin/streams'
     | '/admin/subjects'
@@ -275,11 +235,7 @@ export interface FileRouteTypes {
     | '/bookmarks'
     | '/contact'
     | '/profile'
-    | '/admin/ai-logs'
-    | '/admin/bookmarks'
     | '/admin/downloads'
-    | '/admin/papers'
-    | '/admin/questions'
     | '/admin/settings'
     | '/admin/streams'
     | '/admin/subjects'
@@ -299,11 +255,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/profile'
     | '/study'
-    | '/admin/ai-logs'
-    | '/admin/bookmarks'
     | '/admin/downloads'
-    | '/admin/papers'
-    | '/admin/questions'
     | '/admin/settings'
     | '/admin/streams'
     | '/admin/subjects'
@@ -430,39 +382,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/questions': {
-      id: '/admin/questions'
-      path: '/questions'
-      fullPath: '/admin/questions'
-      preLoaderRoute: typeof AdminQuestionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/papers': {
-      id: '/admin/papers'
-      path: '/papers'
-      fullPath: '/admin/papers'
-      preLoaderRoute: typeof AdminPapersRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/downloads': {
       id: '/admin/downloads'
       path: '/downloads'
       fullPath: '/admin/downloads'
       preLoaderRoute: typeof AdminDownloadsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/bookmarks': {
-      id: '/admin/bookmarks'
-      path: '/bookmarks'
-      fullPath: '/admin/bookmarks'
-      preLoaderRoute: typeof AdminBookmarksRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/ai-logs': {
-      id: '/admin/ai-logs'
-      path: '/ai-logs'
-      fullPath: '/admin/ai-logs'
-      preLoaderRoute: typeof AdminAiLogsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/study/al/': {
@@ -511,11 +435,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
-  AdminAiLogsRoute: typeof AdminAiLogsRoute
-  AdminBookmarksRoute: typeof AdminBookmarksRoute
   AdminDownloadsRoute: typeof AdminDownloadsRoute
-  AdminPapersRoute: typeof AdminPapersRoute
-  AdminQuestionsRoute: typeof AdminQuestionsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminStreamsRoute: typeof AdminStreamsRoute
   AdminSubjectsRoute: typeof AdminSubjectsRoute
@@ -523,11 +443,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminAiLogsRoute: AdminAiLogsRoute,
-  AdminBookmarksRoute: AdminBookmarksRoute,
   AdminDownloadsRoute: AdminDownloadsRoute,
-  AdminPapersRoute: AdminPapersRoute,
-  AdminQuestionsRoute: AdminQuestionsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminStreamsRoute: AdminStreamsRoute,
   AdminSubjectsRoute: AdminSubjectsRoute,
@@ -601,3 +517,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
