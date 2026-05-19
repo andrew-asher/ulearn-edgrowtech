@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { EdGrowLogo } from "@/components/brand/Logo";
 import {
@@ -25,16 +25,13 @@ const links = [
 
 function AdminLayout() {
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const navigate = useNavigate();
   const [ready, setReady] = useState(false);
+  const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    if (!isAdminAuthed()) {
-      navigate({ to: "/admin-login", replace: true });
-    } else {
-      setReady(true);
-    }
-  }, [navigate, path]);
+    setAuthed(isAdminAuthed());
+    setReady(true);
+  }, [path]);
 
   if (!ready) {
     return (
@@ -44,9 +41,13 @@ function AdminLayout() {
     );
   }
 
+  if (!authed) {
+    return <Navigate to="/admin-login" replace />;
+  }
+
   const logout = () => {
     signOutAdmin();
-    navigate({ to: "/admin-login", replace: true });
+    setAuthed(false);
   };
 
   return (
