@@ -9,7 +9,7 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <EdGrowLogo size={32} />
             <div>
-              <div className="font-display font-bold">U-Learn by EdGrow</div>
+              <div className="font-display font-bold">U-Learn by EdGrow Tech</div>
               <div className="text-xs text-muted-foreground">edgrow.lk · A digital education platform for the new AI era</div>
             </div>
           </div>

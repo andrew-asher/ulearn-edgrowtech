@@ -3,7 +3,7 @@ import { GraduationCap, BookOpenCheck, Sparkles } from "lucide-react";
 export function AboutSection() {
   const cards = [
     { icon: <GraduationCap className="h-6 w-6" />, title: "Learn interactively", text: "Solve questions on screen instead of staring at static PDFs. Get instant feedback as you practice." },
-    { icon: <BookOpenCheck className="h-6 w-6" />, title: "Practice with past papers", text: "Real exam questions, organised by year, medium and paper type — exactly how you'll see them." },
+    { icon: <BookOpenCheck className="h-6 w-6" />, title: "Practice with past papers", text: "Real exam questions, organised by year, medium and paper type, exactly how you will see them." },
     { icon: <Sparkles className="h-6 w-6" />, title: "Grow with AI support", text: "Stuck on a question? Ask the AI tutor for a clear, step-by-step explanation built for your level." },
   ];
   return (
@@ -11,12 +11,12 @@ export function AboutSection() {
       <div className="eg-watermark opacity-60" aria-hidden />
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="max-w-3xl">
-          <div className="text-xs uppercase tracking-[0.25em] text-primary font-semibold">About EdGrow</div>
+          <div className="text-xs uppercase tracking-[0.25em] text-primary font-semibold">About EdGrow Tech</div>
           <h2 className="mt-3 font-display text-3xl sm:text-5xl font-bold tracking-tight">
             Digital education for the <span className="text-gradient">new AI era.</span>
           </h2>
           <p className="mt-5 text-muted-foreground text-base sm:text-lg">
-            EdGrow is building a future-ready education ecosystem for Sri Lankan students. U-Learn is our initial learning product, starting with A/L science streams and designed to expand into more tools, resources, and AI-powered learning products in the future.
+            EdGrow Tech is building a future-ready education ecosystem for Sri Lankan students, with a clear focus on increasing explainability for kids so they truly understand what they learn. U-Learn is our first learning product, starting with A/L science streams and designed to grow into a full suite of AI-powered learning tools for the future generation.
           </p>
         </div>
 

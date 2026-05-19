@@ -22,7 +22,7 @@ const slides: Slide[] = [
       </>
     ),
     description:
-      "A digital education platform built for the new AI era — helping students study smarter through interactive past papers, explanations, bookmarks and AI-powered learning support.",
+      "A digital education platform built for the new AI era. We help students study smarter through interactive past papers, clear explanations, bookmarks and AI-powered learning support.",
     primary: { label: "Start Studying", to: "/study" },
     secondary: { label: "Explore Platform", to: "/about" },
     highlights: [
@@ -40,7 +40,7 @@ const slides: Slide[] = [
       </>
     ),
     description:
-      "EdGrow is building a future-ready learning ecosystem — focused on explainability, personalised growth and AI-native tools that help every Sri Lankan student understand, not just memorise.",
+      "EdGrow Tech is building a future-ready learning ecosystem for the next generation of Sri Lankan students. Our focus is to increase explainability for kids, so every child truly understands the concept behind every answer instead of just memorising it. We are blending AI-native tools, personalised growth tracking and a growth-focused strategy to shape how the future generation learns.",
     primary: { label: "See the Vision", to: "/about" },
     secondary: { label: "Try the Platform", to: "/study" },
     highlights: [
