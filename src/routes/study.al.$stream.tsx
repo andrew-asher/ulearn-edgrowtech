@@ -28,7 +28,7 @@ function StreamPage() {
         <p className="mt-3 text-muted-foreground">{stream.description}</p>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {stream.subjects.map((sub, i) => (
+          {stream.subjects.map((sub: string, i: number) => (
             <div key={sub}
               className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-soft animate-fade-up"
               style={{ animationDelay: `${i * 70}ms` }}>
