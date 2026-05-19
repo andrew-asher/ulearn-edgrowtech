@@ -90,7 +90,7 @@ function InteractivePaper() {
           <aside className="lg:sticky lg:top-20 self-start rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="text-xs uppercase tracking-widest text-muted-foreground">Questions</div>
             <div className="mt-3 grid grid-cols-5 lg:grid-cols-3 gap-2">
-              {list.map((qq, i) => {
+              {list.map((qq: typeof list[number], i: number) => {
                 const s = statuses[qq.id];
                 const isActive = i === active;
                 const isBM = isBookmarked(`${paper.id}:${qq.id}`);
@@ -162,7 +162,7 @@ function InteractivePaper() {
               )}
 
               <div className="mt-6 grid gap-2.5">
-                {q.options.map((o) => {
+                {q.options.map((o: typeof q.options[number]) => {
                   const isSel = status.selected === o.key;
                   const isCorrect = status.submitted && o.key === q.correct;
                   const isWrong = status.submitted && isSel && o.key !== q.correct;
@@ -259,8 +259,9 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: "mi
 }
 
 function AIChat() {
-  const [messages, setMessages] = useState([
-    { role: "ai" as const, text: "Hi! I'm your U-Learn AI tutor. Ask anything about this question." },
+  type ChatMsg = { role: "ai" | "user"; text: string };
+  const [messages, setMessages] = useState<ChatMsg[]>([
+    { role: "ai", text: "Hi! I'm your U-Learn AI tutor. Ask anything about this question." },
   ]);
   const [input, setInput] = useState("");
   const send = () => {
