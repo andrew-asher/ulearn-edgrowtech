@@ -95,6 +95,5 @@ function AdminLayout() {
           </div>
         </main>
       </div>
-    </AdminStoreProvider>
   );
 }
