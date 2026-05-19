@@ -7,6 +7,7 @@ import {
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "@/lib/theme";
 import { BookmarkProvider } from "@/lib/bookmarks";
+import { AdminStoreProvider } from "@/lib/admin-store";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/sonner";
@@ -91,10 +92,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <BookmarkProvider>
-          <AppShell />
-          <Toaster />
-        </BookmarkProvider>
+        <AdminStoreProvider>
+          <BookmarkProvider>
+            <AppShell />
+            <Toaster />
+          </BookmarkProvider>
+        </AdminStoreProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
