@@ -192,9 +192,12 @@ function PapersSection({
               <div className="mt-4 flex items-center justify-between">
                 <Badge variant="secondary" className="rounded-full">{qCount(p)} questions total</Badge>
                 <Button asChild size="sm" variant="outline" className="rounded-full">
-                  <a href={`/admin/subjects/${encodeURIComponent(subjectId)}/papers/${encodeURIComponent(p.id)}`}>
+                  <Link
+                    to="/admin/subjects/$subjectId/papers/$paperId"
+                    params={{ subjectId, paperId: p.id }}
+                  >
                     Manage sections <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                  </a>
+                  </Link>
                 </Button>
               </div>
             </div>
