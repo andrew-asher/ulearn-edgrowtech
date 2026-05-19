@@ -97,7 +97,7 @@ function SubjectsAdmin() {
                       </div>
                       {sub.description && <p className="mt-3 text-sm text-muted-foreground">{sub.description}</p>}
                       <Button asChild variant="outline" size="sm" className="mt-4 rounded-full">
-                        <Link to="/admin/subjects/$subjectId" params={{ subjectId: sub.id }}>
+                        <Link to="/admin/subjects/$subjectId/" params={{ subjectId: sub.id }}>
                           Manage content <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                         </Link>
                       </Button>
