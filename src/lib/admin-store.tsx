@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { streams as seedStreams, papers as seedPapers, questions as seedQuestions, subjectSlug } from "@/lib/mock-data";
+import { streams as seedStreams, subjectSlug } from "@/lib/mock-data";
 
 export type OptionKey = "A" | "B" | "C" | "D" | "E";
 export type Difficulty = "Easy" | "Medium" | "Hard";
