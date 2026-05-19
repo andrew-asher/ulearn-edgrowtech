@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Moon, Sun, Globe, User, Menu, X } from "lucide-react";
+import { Moon, Sun, Globe, User, Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { EdGrowLogo } from "@/components/brand/Logo";
 import { useTheme } from "@/lib/theme";
@@ -58,6 +58,11 @@ export function Navbar() {
           <LanguageSelector />
           <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme" className="rounded-full">
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
+          <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex rounded-full text-muted-foreground">
+            <Link to="/admin-login">
+              <Shield className="h-4 w-4 mr-1.5" /> Admin
+            </Link>
           </Button>
           <Button asChild size="sm" className="hidden sm:inline-flex rounded-full">
             <Link to="/profile">
