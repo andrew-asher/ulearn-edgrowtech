@@ -54,7 +54,7 @@ function PaperQuestionsAdmin() {
   return (
     <div>
       <Button asChild variant="ghost" size="sm" className="-ml-2 mb-2">
-        <Link to="/admin/subjects/$subjectId" params={{ subjectId }}>
+        <Link to="/admin/subjects/$subjectId/" params={{ subjectId }}>
           <ArrowLeft className="h-4 w-4 mr-1.5" /> Back to {sub.name}
         </Link>
       </Button>
