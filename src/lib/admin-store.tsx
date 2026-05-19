@@ -157,38 +157,21 @@ function emptyContent(name: string): SubjectContent {
 function buildSeed(): Snapshot {
   const subjects: AdminSubject[] = [];
   for (const s of seedStreams) {
+    if (s.status !== "available") continue;
     for (const subName of s.subjects) {
       const id = `${s.id}__${subjectSlug(subName)}`;
       const content = emptyContent(subName);
-      const papersForSubject = seedPapers.filter(
-        (p) => p.subject.toLowerCase() === subName.toLowerCase(),
-      );
-      content.pastPapers.items = papersForSubject.map((p) => {
-        const sections = blueprintForSubject(subName);
-        // Drop the seeded MCQ data into the first MCQ-like section
-        const target = sections.find((sec) => sec.defaultType === "MCQ") ?? sections[0];
-        const seeded = seedQuestions
-          .filter((q) => q.paperId === p.id)
-          .map((q, i) => ({
-            id: q.id,
-            number: i + 1,
-            type: "MCQ" as QuestionType,
-            text: q.text,
-            options: q.options,
-            correct: q.correct,
-            explanation: q.explanation,
-            topic: q.topic,
-            difficulty: q.difficulty,
-          }));
-        target.questions = seeded;
+      // Seed a 2023 paper with full blueprint, pre-filled with placeholder questions
+      const seedYears = [2023, 2022];
+      content.pastPapers.items = seedYears.map((year) => {
+        const sections = blueprintForSubject(subName).map((sec) => fillSection(sec, subName));
         return {
-          id: p.id,
-          title: `${p.subject} ${p.year} ${p.paperType}`,
-          year: p.year,
-          medium: p.medium,
-          paperType: p.paperType,
-          fileName: p.downloadUrl.split("/").pop(),
-          description: `${p.paperType} paper · ${p.medium} medium`,
+          id: `${id}__${year}`,
+          title: `${subName} ${year}`,
+          year,
+          medium: "English" as Medium,
+          paperType: "Mixed" as const,
+          description: `${subName} ${year} full paper — auto-seeded with the standard section blueprint. Edit each question to replace placeholders with the real exam text.`,
           sections,
         };
       });
