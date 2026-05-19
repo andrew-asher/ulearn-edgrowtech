@@ -11,11 +11,13 @@ function Dashboard() {
     (n, s) => n + s.content.pastPapers.items.length + s.content.modelPapers.items.length,
     0,
   );
+  const qCount = (p: { sections: { questions: unknown[] }[] }) =>
+    p.sections.reduce((n, sec) => n + sec.questions.length, 0);
   const totalQuestions = subjects.reduce(
     (n, s) =>
       n +
-      s.content.pastPapers.items.reduce((m, p) => m + p.questions.length, 0) +
-      s.content.modelPapers.items.reduce((m, p) => m + p.questions.length, 0),
+      s.content.pastPapers.items.reduce((m, p) => m + qCount(p), 0) +
+      s.content.modelPapers.items.reduce((m, p) => m + qCount(p), 0),
     0,
   );
   const totalNotes = subjects.reduce((n, s) => n + s.content.notes.items.length, 0);
