@@ -29,7 +29,7 @@ export function Navbar() {
           <EdGrowLogo size={36} />
           <div className="leading-tight">
             <div className="font-display text-base font-bold tracking-tight">U-Learn</div>
-            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">by EdGrow</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">by EdGrow Tech</div>
           </div>
         </Link>
 
