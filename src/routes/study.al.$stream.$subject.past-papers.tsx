@@ -23,6 +23,7 @@ function PapersIndex() {
   const { getSubjectBySlug } = useAdminStore();
   const sub = getSubjectBySlug(stream.id, subjectSlug(subject));
   const papers = sub?.content.pastPapers.items ?? [];
+  const isCombinedMaths = subject.toLowerCase().includes("combined") && subject.toLowerCase().includes("math");
   const years = Array.from(
     new Set(papers.filter((p) => p.year).map((p) => p.year as number)),
   ).sort((a, b) => b - a);
@@ -42,7 +43,9 @@ function PapersIndex() {
           {subject} · Past Papers
         </h1>
         <p className="mt-3 text-muted-foreground">
-          Choose a year to see the paper sections (MCQ, Structured, Essay).
+          {isCombinedMaths
+            ? "Choose a year to open Pure Mathematics and Applied Mathematics with Part A and Part B."
+            : "Choose a year to see MCQ, Structured, and Essay sections."}
         </p>
 
         {years.length === 0 ? (
@@ -73,7 +76,7 @@ function PapersIndex() {
                   </div>
                   <h3 className="mt-4 font-display text-2xl font-bold">{year}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {yearPapers.length} paper{yearPapers.length === 1 ? "" : "s"} · MCQ, Structured & Essay sections
+                    {yearPapers.length} paper{yearPapers.length === 1 ? "" : "s"} · {isCombinedMaths ? "Pure + Applied with Part A / Part B" : "MCQ, Structured & Essay sections"}
                   </p>
                   <div className="mt-5 inline-flex items-center text-sm font-semibold text-primary">
                     Open year <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />

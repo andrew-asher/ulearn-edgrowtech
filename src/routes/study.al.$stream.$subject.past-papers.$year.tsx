@@ -30,11 +30,29 @@ function YearDetail() {
   const { getSubjectBySlug } = useAdminStore();
   const sub = getSubjectBySlug(stream.id, subjectSlug(subject));
   const papers: AdminPaper[] = (sub?.content.pastPapers.items ?? []).filter((p) => p.year === year);
+  const isCombinedMaths = subject.toLowerCase().includes("combined") && subject.toLowerCase().includes("math");
 
   // Flatten to (paper, section) pairs
-  const tiles = papers.flatMap((p) =>
-    p.sections.map((sec: PaperSection) => ({ paper: p, sec })),
-  );
+  const tiles = papers
+    .flatMap((p) => p.sections.map((sec: PaperSection) => ({ paper: p, sec })))
+    .sort((a, b) => {
+      const order = isCombinedMaths
+        ? [
+            "pure-maths-part-a",
+            "pure-mathematics-part-a",
+            "pure-maths-part-b",
+            "pure-mathematics-part-b",
+            "applied-maths-part-a",
+            "applied-mathematics-part-a",
+            "applied-maths-part-b",
+            "applied-mathematics-part-b",
+          ]
+        : ["mcq", "structure", "structured", "essay"];
+      const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const aIndex = order.indexOf(normalize(a.sec.title));
+      const bIndex = order.indexOf(normalize(b.sec.title));
+      return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    });
 
   return (
     <div className="relative">
@@ -51,7 +69,9 @@ function YearDetail() {
           {subject} · {year}
         </h1>
         <p className="mt-3 text-muted-foreground">
-          Pick a section to start practicing.
+          {isCombinedMaths
+            ? "Choose Pure Mathematics or Applied Mathematics, then open Part A or Part B."
+            : "Pick MCQ, Structured, or Essay to start practicing."}
         </p>
 
         {tiles.length === 0 ? (
