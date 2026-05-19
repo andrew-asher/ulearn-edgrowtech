@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  ArrowLeft, Plus, Pencil, Trash2, Image as ImageIcon, X, Layers, Edit3,
+  ArrowLeft, Plus, Pencil, Image as ImageIcon, X, Layers, Edit3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
