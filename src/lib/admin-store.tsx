@@ -368,6 +368,11 @@ type Ctx = {
   updateQuestion: (subjectId: string, paperId: string, sectionId: string, qid: string, patch: Partial<AdminQuestion>) => void;
   deleteQuestion: (subjectId: string, paperId: string, sectionId: string, qid: string) => void;
   deleteAllQuestions: (subjectId: string, paperId: string, sectionId: string) => void;
+  // Bulk regenerate sample questions
+  regenerateSampleQuestions: (
+    subjectId?: string,
+    options?: { overwrite?: boolean; paperId?: string },
+  ) => { papers: number; sections: number; questions: number };
 };
 
 const AdminCtx = createContext<Ctx | null>(null);
