@@ -137,9 +137,9 @@ function buildSeed(): Snapshot {
       const id = `${s.id}__${subjectSlug(subName)}`;
       const content = emptyContent(subName);
       // Seed a 2023 paper with full blueprint, pre-filled with placeholder questions
-      const seedYears = [2023, 2022];
+      const seedYears = [2023, 2022, 2021];
       content.pastPapers.items = seedYears.map((year) => {
-        const sections = blueprintForSubject(subName).map((sec) => fillSection(sec, subName));
+        const sections = blueprintForSubject(subName).map((sec) => fillSection(sec, subName, year));
         return {
           id: `${id}__${year}`,
           title: `${subName} ${year}`,
