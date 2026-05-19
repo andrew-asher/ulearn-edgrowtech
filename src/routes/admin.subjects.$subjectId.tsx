@@ -53,19 +53,18 @@ function SubjectDetail() {
           </h1>
           {subject.description && <p className="mt-2 text-muted-foreground max-w-3xl">{subject.description}</p>}
         </div>
-        <ConfirmDelete
-          label={`Regenerate sample questions for every paper in ${subject.name}? Existing questions in all sections will be replaced.`}
-          trigger={
-            <Button size="sm" variant="outline" className="rounded-full">
-              <Sparkles className="h-4 w-4 mr-1.5" /> Generate sample questions
-            </Button>
-          }
-          confirmLabel="Regenerate"
-          onConfirm={() => {
+        <Button
+          size="sm"
+          variant="outline"
+          className="rounded-full"
+          onClick={() => {
+            if (!confirm(`Regenerate sample questions for every paper in ${subject.name}? Existing questions will be replaced.`)) return;
             const r = regenerateSampleQuestions(subject.id, { overwrite: true });
             toast.success(`Regenerated ${r.questions} questions across ${r.papers} papers`);
           }}
-        />
+        >
+          <Sparkles className="h-4 w-4 mr-1.5" /> Generate sample questions
+        </Button>
       </div>
 
       <div className="mt-10 space-y-10">
