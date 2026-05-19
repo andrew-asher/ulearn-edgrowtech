@@ -79,7 +79,7 @@ type Snapshot = {
   subjects: AdminSubject[];
 };
 
-const STORAGE_KEY = "edgrow-admin-content-v5";
+const STORAGE_KEY = "edgrow-admin-content-v6";
 const uid = () => Math.random().toString(36).slice(2, 10);
 const slugify = (s: string) =>
   s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
