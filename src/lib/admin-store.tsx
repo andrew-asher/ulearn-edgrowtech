@@ -452,12 +452,16 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
       addSubject: (streamId, name, description) =>
         update((s) => {
           const id = `${streamId}__${slugify(name)}__${uid()}`;
+          const content = emptyContent(name);
+          if (shouldSeedDefaultPapers(name)) {
+            content.pastPapers.items = DEFAULT_SEED_YEARS.map((year) => createSeedPaper(id, name, year));
+          }
           s.subjects.push({
             id,
             streamId,
             name,
             description,
-            content: emptyContent(name),
+            content,
           });
           return s;
         }),
@@ -481,9 +485,12 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
       addPaper: (subjectId, section, data) =>
         mutSubject(subjectId, (sub) => {
           const { subjectName, ...rest } = data;
+          const year = rest.year ?? new Date().getFullYear();
           sub.content[section].items.push({
             id: uid(),
-            sections: blueprintForSubject(subjectName || sub.name),
+            sections: blueprintForSubject(subjectName || sub.name).map((paperSection) =>
+              fillSection({ ...paperSection, questions: [...paperSection.questions] }, subjectName || sub.name, year),
+            ),
             ...rest,
           });
         }),
