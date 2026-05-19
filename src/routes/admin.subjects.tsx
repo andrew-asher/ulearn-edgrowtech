@@ -97,7 +97,7 @@ function SubjectsAdmin() {
                       </div>
                       {sub.description && <p className="mt-3 text-sm text-muted-foreground">{sub.description}</p>}
                       <Button asChild variant="outline" size="sm" className="mt-4 rounded-full">
-                        <a href={`/admin/subjects/${encodeURIComponent(sub.id)}`}>
+                        <a href={`/admin/subjects/${encodeURIComponent(sub.id)}/`}>
                           Manage content <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                         </a>
                       </Button>
