@@ -37,7 +37,7 @@ function AdminLayout() {
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {links.map((l) => {
-            const active = l.exact ? path === l.to : path.startsWith(l.to);
+            const active = ("exact" in l && l.exact) ? path === l.to : path.startsWith(l.to);
             return (
               <Link key={l.to} to={l.to}
                 className={cn(
