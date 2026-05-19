@@ -33,7 +33,7 @@ export const Route = createFileRoute("/admin/subjects/$subjectId")({
 
 function SubjectDetail() {
   const { subjectId } = Route.useParams();
-  const { getSubject, streams } = useAdminStore();
+  const { getSubject, streams, regenerateSampleQuestions } = useAdminStore();
   const subject = getSubject(subjectId);
   if (!subject) throw notFound();
   const stream = streams.find((s) => s.id === subject.streamId);
@@ -43,13 +43,30 @@ function SubjectDetail() {
       <Button asChild variant="ghost" size="sm" className="-ml-2 mb-2">
         <Link to="/admin/subjects"><ArrowLeft className="h-4 w-4 mr-1.5" /> All subjects</Link>
       </Button>
-      <div className="text-xs uppercase tracking-[0.25em] text-primary font-semibold">
-        {stream?.name ?? "Stream"} · Subject
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <div className="text-xs uppercase tracking-[0.25em] text-primary font-semibold">
+            {stream?.name ?? "Stream"} · Subject
+          </div>
+          <h1 className="mt-1 font-display text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-3">
+            <BookOpen className="h-7 w-7 text-primary" /> {subject.name}
+          </h1>
+          {subject.description && <p className="mt-2 text-muted-foreground max-w-3xl">{subject.description}</p>}
+        </div>
+        <ConfirmDelete
+          label={`Regenerate sample questions for every paper in ${subject.name}? Existing questions in all sections will be replaced.`}
+          trigger={
+            <Button size="sm" variant="outline" className="rounded-full">
+              <Sparkles className="h-4 w-4 mr-1.5" /> Generate sample questions
+            </Button>
+          }
+          confirmLabel="Regenerate"
+          onConfirm={() => {
+            const r = regenerateSampleQuestions(subject.id, { overwrite: true });
+            toast.success(`Regenerated ${r.questions} questions across ${r.papers} papers`);
+          }}
+        />
       </div>
-      <h1 className="mt-1 font-display text-3xl sm:text-4xl font-bold tracking-tight flex items-center gap-3">
-        <BookOpen className="h-7 w-7 text-primary" /> {subject.name}
-      </h1>
-      {subject.description && <p className="mt-2 text-muted-foreground max-w-3xl">{subject.description}</p>}
 
       <div className="mt-10 space-y-10">
         <PapersSection subjectId={subject.id} section="pastPapers" icon={<FileText className="h-5 w-5" />} />
