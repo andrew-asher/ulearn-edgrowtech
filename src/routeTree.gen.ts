@@ -9,38 +9,330 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StudyRouteImport } from './routes/study'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BookmarksRouteImport } from './routes/bookmarks'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as StudyAlRouteImport } from './routes/study.al'
+import { Route as InteractivePaperIdRouteImport } from './routes/interactive.$paperId'
+import { Route as AdminSubjectsRouteImport } from './routes/admin.subjects'
+import { Route as AdminStreamsRouteImport } from './routes/admin.streams'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminQuestionsRouteImport } from './routes/admin.questions'
+import { Route as AdminPapersRouteImport } from './routes/admin.papers'
+import { Route as AdminDownloadsRouteImport } from './routes/admin.downloads'
+import { Route as AdminBookmarksRouteImport } from './routes/admin.bookmarks'
+import { Route as AdminAiLogsRouteImport } from './routes/admin.ai-logs'
+import { Route as StudyAlStreamRouteImport } from './routes/study.al.$stream'
+import { Route as StudyAlStreamSubjectRouteImport } from './routes/study.al.$stream.$subject'
+import { Route as StudyAlStreamSubjectPastPapersRouteImport } from './routes/study.al.$stream.$subject.past-papers'
 
+const StudyRoute = StudyRouteImport.update({
+  id: '/study',
+  path: '/study',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookmarksRoute = BookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const StudyAlRoute = StudyAlRouteImport.update({
+  id: '/al',
+  path: '/al',
+  getParentRoute: () => StudyRoute,
+} as any)
+const InteractivePaperIdRoute = InteractivePaperIdRouteImport.update({
+  id: '/interactive/$paperId',
+  path: '/interactive/$paperId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSubjectsRoute = AdminSubjectsRouteImport.update({
+  id: '/subjects',
+  path: '/subjects',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminStreamsRoute = AdminStreamsRouteImport.update({
+  id: '/streams',
+  path: '/streams',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminQuestionsRoute = AdminQuestionsRouteImport.update({
+  id: '/questions',
+  path: '/questions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPapersRoute = AdminPapersRouteImport.update({
+  id: '/papers',
+  path: '/papers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDownloadsRoute = AdminDownloadsRouteImport.update({
+  id: '/downloads',
+  path: '/downloads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBookmarksRoute = AdminBookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAiLogsRoute = AdminAiLogsRouteImport.update({
+  id: '/ai-logs',
+  path: '/ai-logs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const StudyAlStreamRoute = StudyAlStreamRouteImport.update({
+  id: '/$stream',
+  path: '/$stream',
+  getParentRoute: () => StudyAlRoute,
+} as any)
+const StudyAlStreamSubjectRoute = StudyAlStreamSubjectRouteImport.update({
+  id: '/$subject',
+  path: '/$subject',
+  getParentRoute: () => StudyAlStreamRoute,
+} as any)
+const StudyAlStreamSubjectPastPapersRoute =
+  StudyAlStreamSubjectPastPapersRouteImport.update({
+    id: '/past-papers',
+    path: '/past-papers',
+    getParentRoute: () => StudyAlStreamSubjectRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/bookmarks': typeof BookmarksRoute
+  '/contact': typeof ContactRoute
+  '/profile': typeof ProfileRoute
+  '/study': typeof StudyRouteWithChildren
+  '/admin/ai-logs': typeof AdminAiLogsRoute
+  '/admin/bookmarks': typeof AdminBookmarksRoute
+  '/admin/downloads': typeof AdminDownloadsRoute
+  '/admin/papers': typeof AdminPapersRoute
+  '/admin/questions': typeof AdminQuestionsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/streams': typeof AdminStreamsRoute
+  '/admin/subjects': typeof AdminSubjectsRoute
+  '/interactive/$paperId': typeof InteractivePaperIdRoute
+  '/study/al': typeof StudyAlRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/bookmarks': typeof BookmarksRoute
+  '/contact': typeof ContactRoute
+  '/profile': typeof ProfileRoute
+  '/study': typeof StudyRouteWithChildren
+  '/admin/ai-logs': typeof AdminAiLogsRoute
+  '/admin/bookmarks': typeof AdminBookmarksRoute
+  '/admin/downloads': typeof AdminDownloadsRoute
+  '/admin/papers': typeof AdminPapersRoute
+  '/admin/questions': typeof AdminQuestionsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/streams': typeof AdminStreamsRoute
+  '/admin/subjects': typeof AdminSubjectsRoute
+  '/interactive/$paperId': typeof InteractivePaperIdRoute
+  '/study/al': typeof StudyAlRouteWithChildren
+  '/admin': typeof AdminIndexRoute
+  '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/bookmarks': typeof BookmarksRoute
+  '/contact': typeof ContactRoute
+  '/profile': typeof ProfileRoute
+  '/study': typeof StudyRouteWithChildren
+  '/admin/ai-logs': typeof AdminAiLogsRoute
+  '/admin/bookmarks': typeof AdminBookmarksRoute
+  '/admin/downloads': typeof AdminDownloadsRoute
+  '/admin/papers': typeof AdminPapersRoute
+  '/admin/questions': typeof AdminQuestionsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/streams': typeof AdminStreamsRoute
+  '/admin/subjects': typeof AdminSubjectsRoute
+  '/interactive/$paperId': typeof InteractivePaperIdRoute
+  '/study/al': typeof StudyAlRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/bookmarks'
+    | '/contact'
+    | '/profile'
+    | '/study'
+    | '/admin/ai-logs'
+    | '/admin/bookmarks'
+    | '/admin/downloads'
+    | '/admin/papers'
+    | '/admin/questions'
+    | '/admin/settings'
+    | '/admin/streams'
+    | '/admin/subjects'
+    | '/interactive/$paperId'
+    | '/study/al'
+    | '/admin/'
+    | '/study/al/$stream'
+    | '/study/al/$stream/$subject'
+    | '/study/al/$stream/$subject/past-papers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/bookmarks'
+    | '/contact'
+    | '/profile'
+    | '/study'
+    | '/admin/ai-logs'
+    | '/admin/bookmarks'
+    | '/admin/downloads'
+    | '/admin/papers'
+    | '/admin/questions'
+    | '/admin/settings'
+    | '/admin/streams'
+    | '/admin/subjects'
+    | '/interactive/$paperId'
+    | '/study/al'
+    | '/admin'
+    | '/study/al/$stream'
+    | '/study/al/$stream/$subject'
+    | '/study/al/$stream/$subject/past-papers'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/bookmarks'
+    | '/contact'
+    | '/profile'
+    | '/study'
+    | '/admin/ai-logs'
+    | '/admin/bookmarks'
+    | '/admin/downloads'
+    | '/admin/papers'
+    | '/admin/questions'
+    | '/admin/settings'
+    | '/admin/streams'
+    | '/admin/subjects'
+    | '/interactive/$paperId'
+    | '/study/al'
+    | '/admin/'
+    | '/study/al/$stream'
+    | '/study/al/$stream/$subject'
+    | '/study/al/$stream/$subject/past-papers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  BookmarksRoute: typeof BookmarksRoute
+  ContactRoute: typeof ContactRoute
+  ProfileRoute: typeof ProfileRoute
+  StudyRoute: typeof StudyRouteWithChildren
+  InteractivePaperIdRoute: typeof InteractivePaperIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/study': {
+      id: '/study'
+      path: '/study'
+      fullPath: '/study'
+      preLoaderRoute: typeof StudyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookmarks': {
+      id: '/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +340,187 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/study/al': {
+      id: '/study/al'
+      path: '/al'
+      fullPath: '/study/al'
+      preLoaderRoute: typeof StudyAlRouteImport
+      parentRoute: typeof StudyRoute
+    }
+    '/interactive/$paperId': {
+      id: '/interactive/$paperId'
+      path: '/interactive/$paperId'
+      fullPath: '/interactive/$paperId'
+      preLoaderRoute: typeof InteractivePaperIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/subjects': {
+      id: '/admin/subjects'
+      path: '/subjects'
+      fullPath: '/admin/subjects'
+      preLoaderRoute: typeof AdminSubjectsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/streams': {
+      id: '/admin/streams'
+      path: '/streams'
+      fullPath: '/admin/streams'
+      preLoaderRoute: typeof AdminStreamsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/questions': {
+      id: '/admin/questions'
+      path: '/questions'
+      fullPath: '/admin/questions'
+      preLoaderRoute: typeof AdminQuestionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/papers': {
+      id: '/admin/papers'
+      path: '/papers'
+      fullPath: '/admin/papers'
+      preLoaderRoute: typeof AdminPapersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/downloads': {
+      id: '/admin/downloads'
+      path: '/downloads'
+      fullPath: '/admin/downloads'
+      preLoaderRoute: typeof AdminDownloadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bookmarks': {
+      id: '/admin/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/admin/bookmarks'
+      preLoaderRoute: typeof AdminBookmarksRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ai-logs': {
+      id: '/admin/ai-logs'
+      path: '/ai-logs'
+      fullPath: '/admin/ai-logs'
+      preLoaderRoute: typeof AdminAiLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/study/al/$stream': {
+      id: '/study/al/$stream'
+      path: '/$stream'
+      fullPath: '/study/al/$stream'
+      preLoaderRoute: typeof StudyAlStreamRouteImport
+      parentRoute: typeof StudyAlRoute
+    }
+    '/study/al/$stream/$subject': {
+      id: '/study/al/$stream/$subject'
+      path: '/$subject'
+      fullPath: '/study/al/$stream/$subject'
+      preLoaderRoute: typeof StudyAlStreamSubjectRouteImport
+      parentRoute: typeof StudyAlStreamRoute
+    }
+    '/study/al/$stream/$subject/past-papers': {
+      id: '/study/al/$stream/$subject/past-papers'
+      path: '/past-papers'
+      fullPath: '/study/al/$stream/$subject/past-papers'
+      preLoaderRoute: typeof StudyAlStreamSubjectPastPapersRouteImport
+      parentRoute: typeof StudyAlStreamSubjectRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAiLogsRoute: typeof AdminAiLogsRoute
+  AdminBookmarksRoute: typeof AdminBookmarksRoute
+  AdminDownloadsRoute: typeof AdminDownloadsRoute
+  AdminPapersRoute: typeof AdminPapersRoute
+  AdminQuestionsRoute: typeof AdminQuestionsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminStreamsRoute: typeof AdminStreamsRoute
+  AdminSubjectsRoute: typeof AdminSubjectsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAiLogsRoute: AdminAiLogsRoute,
+  AdminBookmarksRoute: AdminBookmarksRoute,
+  AdminDownloadsRoute: AdminDownloadsRoute,
+  AdminPapersRoute: AdminPapersRoute,
+  AdminQuestionsRoute: AdminQuestionsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminStreamsRoute: AdminStreamsRoute,
+  AdminSubjectsRoute: AdminSubjectsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface StudyAlStreamSubjectRouteChildren {
+  StudyAlStreamSubjectPastPapersRoute: typeof StudyAlStreamSubjectPastPapersRoute
+}
+
+const StudyAlStreamSubjectRouteChildren: StudyAlStreamSubjectRouteChildren = {
+  StudyAlStreamSubjectPastPapersRoute: StudyAlStreamSubjectPastPapersRoute,
+}
+
+const StudyAlStreamSubjectRouteWithChildren =
+  StudyAlStreamSubjectRoute._addFileChildren(StudyAlStreamSubjectRouteChildren)
+
+interface StudyAlStreamRouteChildren {
+  StudyAlStreamSubjectRoute: typeof StudyAlStreamSubjectRouteWithChildren
+}
+
+const StudyAlStreamRouteChildren: StudyAlStreamRouteChildren = {
+  StudyAlStreamSubjectRoute: StudyAlStreamSubjectRouteWithChildren,
+}
+
+const StudyAlStreamRouteWithChildren = StudyAlStreamRoute._addFileChildren(
+  StudyAlStreamRouteChildren,
+)
+
+interface StudyAlRouteChildren {
+  StudyAlStreamRoute: typeof StudyAlStreamRouteWithChildren
+}
+
+const StudyAlRouteChildren: StudyAlRouteChildren = {
+  StudyAlStreamRoute: StudyAlStreamRouteWithChildren,
+}
+
+const StudyAlRouteWithChildren =
+  StudyAlRoute._addFileChildren(StudyAlRouteChildren)
+
+interface StudyRouteChildren {
+  StudyAlRoute: typeof StudyAlRouteWithChildren
+}
+
+const StudyRouteChildren: StudyRouteChildren = {
+  StudyAlRoute: StudyAlRouteWithChildren,
+}
+
+const StudyRouteWithChildren = StudyRoute._addFileChildren(StudyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
+  BookmarksRoute: BookmarksRoute,
+  ContactRoute: ContactRoute,
+  ProfileRoute: ProfileRoute,
+  StudyRoute: StudyRouteWithChildren,
+  InteractivePaperIdRoute: InteractivePaperIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
