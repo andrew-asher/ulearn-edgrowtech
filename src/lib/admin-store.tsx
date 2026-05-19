@@ -81,9 +81,22 @@ type Snapshot = {
 };
 
 const STORAGE_KEY = "edgrow-admin-content-v7";
+const DEFAULT_SEED_YEARS = [2023, 2022, 2021];
+const OPTION_KEYS: OptionKey[] = ["A", "B", "C", "D", "E"];
 const uid = () => Math.random().toString(36).slice(2, 10);
 const slugify = (s: string) =>
   s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+const sectionKey = (title: string) =>
+  slugify(title.replace(/mathematics/gi, "maths").replace(/structured/gi, "structure"));
+
+function shouldSeedDefaultPapers(name: string) {
+  const lower = name.toLowerCase();
+  return lower.includes("physics")
+    || lower.includes("chemistry")
+    || lower.includes("biology")
+    || (lower.includes("combined") && lower.includes("math"));
+}
 
 export function blueprintForSubject(name: string): PaperSection[] {
   const lower = name.toLowerCase();
@@ -107,6 +120,150 @@ function fillSection(sec: PaperSection, subject: string, year: number): PaperSec
   const target = sec.expectedCount ?? 5;
   sec.questions = generateSampleQuestions(subject, sec.title, sec.defaultType, target, year);
   return sec;
+}
+
+function normalizeQuestion(
+  question: Partial<AdminQuestion>,
+  index: number,
+  fallbackType: QuestionType,
+): AdminQuestion {
+  const type = question.type ?? fallbackType;
+  return {
+    id: question.id ?? uid(),
+    number: question.number ?? index + 1,
+    type,
+    text: question.text ?? `Question ${index + 1}`,
+    imageDataUrl: question.imageDataUrl,
+    options: type === "MCQ"
+      ? OPTION_KEYS.map((key) => ({
+          key,
+          text: question.options?.find((option) => option.key === key)?.text ?? "",
+        }))
+      : undefined,
+    correct: type === "MCQ" ? (question.correct ?? "A") : undefined,
+    modelAnswer: type === "MCQ" ? undefined : (question.modelAnswer ?? ""),
+    explanation: question.explanation ?? "",
+    marks: question.marks,
+    topic: question.topic ?? "General",
+    difficulty: question.difficulty ?? "Medium",
+  };
+}
+
+function createSeedPaper(subjectId: string, subjectName: string, year: number): AdminPaper {
+  return {
+    id: `${subjectId}__${year}`,
+    title: `${subjectName} ${year}`,
+    year,
+    medium: "English",
+    paperType: "Mixed",
+    description: `${subjectName} ${year} full paper with the standard section structure and sample questions ready to edit.`,
+    sections: blueprintForSubject(subjectName).map((sec) =>
+      fillSection({ ...sec, questions: [...sec.questions] }, subjectName, year),
+    ),
+  };
+}
+
+function normalizePaper(subjectId: string, subjectName: string, paper: Partial<AdminPaper>): AdminPaper {
+  const normalizedYear = typeof paper.year === "number" ? paper.year : new Date().getFullYear();
+  const blueprint = blueprintForSubject(subjectName);
+  const existingSections = paper.sections ?? [];
+  const usedKeys = new Set<string>();
+
+  const sections = blueprint.map((template) => {
+    const match = existingSections.find((section) => sectionKey(section.title) === sectionKey(template.title));
+    if (match) usedKeys.add(sectionKey(match.title));
+
+    const normalizedQuestions = (match?.questions ?? []).map((question, index) =>
+      normalizeQuestion(question, index, match?.defaultType ?? template.defaultType),
+    );
+
+    return fillSection({
+      id: match?.id ?? template.id,
+      title: match?.title ?? template.title,
+      defaultType: match?.defaultType ?? template.defaultType,
+      expectedCount: match?.expectedCount ?? template.expectedCount,
+      questions: normalizedQuestions,
+    }, subjectName, normalizedYear);
+  });
+
+  const extras = existingSections
+    .filter((section) => !usedKeys.has(sectionKey(section.title)))
+    .map((section) => fillSection({
+      id: section.id ?? uid(),
+      title: section.title ?? "Section",
+      defaultType: section.defaultType ?? "Structured",
+      expectedCount: section.expectedCount,
+      questions: (section.questions ?? []).map((question, index) =>
+        normalizeQuestion(question, index, section.defaultType ?? "Structured"),
+      ),
+    }, subjectName, normalizedYear));
+
+  return {
+    id: paper.id ?? uid(),
+    title: paper.title ?? `${subjectName} ${normalizedYear}`,
+    year: normalizedYear,
+    medium: paper.medium ?? "English",
+    paperType: paper.paperType ?? "Mixed",
+    fileName: paper.fileName,
+    description: paper.description ?? "",
+    sections: [...sections, ...extras],
+  };
+}
+
+function normalizeSubject(subject: AdminSubject): AdminSubject {
+  const seededContent = emptyContent(subject.name);
+  const normalizedPastPapers = (subject.content?.pastPapers.items ?? [])
+    .map((paper) => normalizePaper(subject.id, subject.name, paper))
+    .sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+
+  if (shouldSeedDefaultPapers(subject.name)) {
+    const years = new Set(normalizedPastPapers.map((paper) => paper.year));
+    for (const year of DEFAULT_SEED_YEARS) {
+      if (!years.has(year)) normalizedPastPapers.push(createSeedPaper(subject.id, subject.name, year));
+    }
+    normalizedPastPapers.sort((a, b) => (b.year ?? 0) - (a.year ?? 0));
+  }
+
+  return {
+    ...subject,
+    content: {
+      pastPapers: {
+        heading: subject.content?.pastPapers.heading ?? seededContent.pastPapers.heading,
+        description: subject.content?.pastPapers.description ?? seededContent.pastPapers.description,
+        items: normalizedPastPapers,
+      },
+      notes: {
+        heading: subject.content?.notes.heading ?? seededContent.notes.heading,
+        description: subject.content?.notes.description ?? seededContent.notes.description,
+        items: subject.content?.notes.items ?? [],
+      },
+      modelPapers: {
+        heading: subject.content?.modelPapers.heading ?? seededContent.modelPapers.heading,
+        description: subject.content?.modelPapers.description ?? seededContent.modelPapers.description,
+        items: (subject.content?.modelPapers.items ?? []).map((paper) =>
+          normalizePaper(subject.id, subject.name, paper),
+        ),
+      },
+    },
+  };
+}
+
+function normalizeSnapshot(input: Snapshot): Snapshot {
+  const seed = buildSeed();
+  const streamMap = new Map(seed.streams.map((stream) => [stream.id, stream]));
+  for (const stream of input.streams ?? []) {
+    streamMap.set(stream.id, { ...streamMap.get(stream.id), ...stream });
+  }
+
+  const subjectMap = new Map(seed.subjects.map((subject) => [subject.id, subject]));
+  for (const subject of input.subjects ?? []) {
+    subjectMap.set(subject.id, normalizeSubject(subject));
+  }
+
+  return {
+    streams: Array.from(streamMap.values()),
+    subjects: Array.from(subjectMap.values()).map((subject) => normalizeSubject(subject)),
+  };
 }
 
 function emptyContent(name: string): SubjectContent {
@@ -137,19 +294,7 @@ function buildSeed(): Snapshot {
       const id = `${s.id}__${subjectSlug(subName)}`;
       const content = emptyContent(subName);
       // Seed a 2023 paper with full blueprint, pre-filled with placeholder questions
-      const seedYears = [2023, 2022, 2021];
-      content.pastPapers.items = seedYears.map((year) => {
-        const sections = blueprintForSubject(subName).map((sec) => fillSection(sec, subName, year));
-        return {
-          id: `${id}__${year}`,
-          title: `${subName} ${year}`,
-          year,
-          medium: "English" as Medium,
-          paperType: "Mixed" as const,
-          description: `${subName} ${year} full paper — auto-seeded with the standard section blueprint. Edit each question to replace placeholders with the real exam text.`,
-          sections,
-        };
-      });
+      content.pastPapers.items = DEFAULT_SEED_YEARS.map((year) => createSeedPaper(id, subName, year));
       subjects.push({
         id,
         streamId: s.id,
@@ -177,7 +322,7 @@ function load(): Snapshot {
     if (!raw) return buildSeed();
     const parsed = JSON.parse(raw) as Snapshot;
     if (!parsed.streams || !parsed.subjects) return buildSeed();
-    return parsed;
+    return normalizeSnapshot(parsed);
   } catch {
     return buildSeed();
   }
