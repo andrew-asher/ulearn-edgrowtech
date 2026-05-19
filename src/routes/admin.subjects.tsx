@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Pencil, BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -97,9 +97,9 @@ function SubjectsAdmin() {
                       </div>
                       {sub.description && <p className="mt-3 text-sm text-muted-foreground">{sub.description}</p>}
                       <Button asChild variant="outline" size="sm" className="mt-4 rounded-full">
-                        <a href={`/admin/subjects/${encodeURIComponent(sub.id)}/`}>
+                        <Link to="/admin/subjects/$subjectId" params={{ subjectId: sub.id }}>
                           Manage content <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-                        </a>
+                        </Link>
                       </Button>
                     </div>
                   ))}
