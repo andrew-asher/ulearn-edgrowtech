@@ -4,6 +4,9 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "clean:router-cache": "node -e \"const fs=require('fs');for(const p of ['node_modules/.vite','node_modules/.cache/tanstack-router','src/routeTree.gen.ts.tmp']){try{fs.rmSync(p,{recursive:true,force:true});console.log('cleared',p)}catch{}}\"",
+    "predev": "npm run clean:router-cache",
+    "prebuild": "npm run clean:router-cache",
     "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
