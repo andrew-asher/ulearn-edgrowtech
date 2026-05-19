@@ -4,7 +4,7 @@ import { useAdminStore } from "@/lib/admin-store";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, CalendarDays, ArrowRight } from "lucide-react";
 
-export const Route = createFileRoute("/study/al/$stream/$subject/past-papers")({
+export const Route = createFileRoute("/study/al/$stream/$subject/past-papers/")({
   head: ({ params }) => ({ meta: [{ title: `Past papers · ${params.subject} · U-Learn` }] }),
   component: PapersIndex,
   notFoundComponent: () => <div className="p-12">Not found</div>,
