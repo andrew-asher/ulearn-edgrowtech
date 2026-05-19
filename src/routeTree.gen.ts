@@ -10,10 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StudyRouteImport } from './routes/study'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BookmarksRouteImport } from './routes/bookmarks'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudyAlRouteImport } from './routes/study.al'
+import { Route as InteractivePaperIdRouteImport } from './routes/interactive.$paperId'
 import { Route as StudyAlStreamRouteImport } from './routes/study.al.$stream'
 import { Route as StudyAlStreamSubjectRouteImport } from './routes/study.al.$stream.$subject'
 import { Route as StudyAlStreamSubjectPastPapersRouteImport } from './routes/study.al.$stream.$subject.past-papers'
@@ -23,9 +26,19 @@ const StudyRoute = StudyRouteImport.update({
   path: '/study',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookmarksRoute = BookmarksRouteImport.update({
+  id: '/bookmarks',
+  path: '/bookmarks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -42,6 +55,11 @@ const StudyAlRoute = StudyAlRouteImport.update({
   id: '/al',
   path: '/al',
   getParentRoute: () => StudyRoute,
+} as any)
+const InteractivePaperIdRoute = InteractivePaperIdRouteImport.update({
+  id: '/interactive/$paperId',
+  path: '/interactive/$paperId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const StudyAlStreamRoute = StudyAlStreamRouteImport.update({
   id: '/$stream',
@@ -63,8 +81,11 @@ const StudyAlStreamSubjectPastPapersRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/bookmarks': typeof BookmarksRoute
   '/contact': typeof ContactRoute
+  '/profile': typeof ProfileRoute
   '/study': typeof StudyRouteWithChildren
+  '/interactive/$paperId': typeof InteractivePaperIdRoute
   '/study/al': typeof StudyAlRouteWithChildren
   '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
@@ -73,8 +94,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/bookmarks': typeof BookmarksRoute
   '/contact': typeof ContactRoute
+  '/profile': typeof ProfileRoute
   '/study': typeof StudyRouteWithChildren
+  '/interactive/$paperId': typeof InteractivePaperIdRoute
   '/study/al': typeof StudyAlRouteWithChildren
   '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
@@ -84,8 +108,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/bookmarks': typeof BookmarksRoute
   '/contact': typeof ContactRoute
+  '/profile': typeof ProfileRoute
   '/study': typeof StudyRouteWithChildren
+  '/interactive/$paperId': typeof InteractivePaperIdRoute
   '/study/al': typeof StudyAlRouteWithChildren
   '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
@@ -96,8 +123,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/bookmarks'
     | '/contact'
+    | '/profile'
     | '/study'
+    | '/interactive/$paperId'
     | '/study/al'
     | '/study/al/$stream'
     | '/study/al/$stream/$subject'
@@ -106,8 +136,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/bookmarks'
     | '/contact'
+    | '/profile'
     | '/study'
+    | '/interactive/$paperId'
     | '/study/al'
     | '/study/al/$stream'
     | '/study/al/$stream/$subject'
@@ -116,8 +149,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/bookmarks'
     | '/contact'
+    | '/profile'
     | '/study'
+    | '/interactive/$paperId'
     | '/study/al'
     | '/study/al/$stream'
     | '/study/al/$stream/$subject'
@@ -127,8 +163,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  BookmarksRoute: typeof BookmarksRoute
   ContactRoute: typeof ContactRoute
+  ProfileRoute: typeof ProfileRoute
   StudyRoute: typeof StudyRouteWithChildren
+  InteractivePaperIdRoute: typeof InteractivePaperIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -140,11 +179,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookmarks': {
+      id: '/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/bookmarks'
+      preLoaderRoute: typeof BookmarksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -167,6 +220,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/study/al'
       preLoaderRoute: typeof StudyAlRouteImport
       parentRoute: typeof StudyRoute
+    }
+    '/interactive/$paperId': {
+      id: '/interactive/$paperId'
+      path: '/interactive/$paperId'
+      fullPath: '/interactive/$paperId'
+      preLoaderRoute: typeof InteractivePaperIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/study/al/$stream': {
       id: '/study/al/$stream'
@@ -239,9 +299,22 @@ const StudyRouteWithChildren = StudyRoute._addFileChildren(StudyRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  BookmarksRoute: BookmarksRoute,
   ContactRoute: ContactRoute,
+  ProfileRoute: ProfileRoute,
   StudyRoute: StudyRouteWithChildren,
+  InteractivePaperIdRoute: InteractivePaperIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
