@@ -126,7 +126,7 @@ function SectionRunner({ paperId, section }: { paperId: string; section: PaperSe
   const toggleBookmark = () => {
     toggle({
       id: bookmarkId, paperId, questionId: q.id,
-      subject: section.title, year: undefined,
+      subject: section.title, year: 0,
       paperType: section.defaultType, questionText: q.text,
     });
     toast.success(bookmarked ? "Removed from bookmarks" : "Bookmarked!");
