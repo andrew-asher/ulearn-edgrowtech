@@ -9,10 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StudyRouteImport } from './routes/study'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StudyAlRouteImport } from './routes/study.al'
+import { Route as StudyAlStreamRouteImport } from './routes/study.al.$stream'
+import { Route as StudyAlStreamSubjectRouteImport } from './routes/study.al.$stream.$subject'
+import { Route as StudyAlStreamSubjectPastPapersRouteImport } from './routes/study.al.$stream.$subject.past-papers'
 
+const StudyRoute = StudyRouteImport.update({
+  id: '/study',
+  path: '/study',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -28,39 +38,108 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudyAlRoute = StudyAlRouteImport.update({
+  id: '/al',
+  path: '/al',
+  getParentRoute: () => StudyRoute,
+} as any)
+const StudyAlStreamRoute = StudyAlStreamRouteImport.update({
+  id: '/$stream',
+  path: '/$stream',
+  getParentRoute: () => StudyAlRoute,
+} as any)
+const StudyAlStreamSubjectRoute = StudyAlStreamSubjectRouteImport.update({
+  id: '/$subject',
+  path: '/$subject',
+  getParentRoute: () => StudyAlStreamRoute,
+} as any)
+const StudyAlStreamSubjectPastPapersRoute =
+  StudyAlStreamSubjectPastPapersRouteImport.update({
+    id: '/past-papers',
+    path: '/past-papers',
+    getParentRoute: () => StudyAlStreamSubjectRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/study': typeof StudyRouteWithChildren
+  '/study/al': typeof StudyAlRouteWithChildren
+  '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/study': typeof StudyRouteWithChildren
+  '/study/al': typeof StudyAlRouteWithChildren
+  '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/study': typeof StudyRouteWithChildren
+  '/study/al': typeof StudyAlRouteWithChildren
+  '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
+  '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/contact'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/study'
+    | '/study/al'
+    | '/study/al/$stream'
+    | '/study/al/$stream/$subject'
+    | '/study/al/$stream/$subject/past-papers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/contact'
-  id: '__root__' | '/' | '/about' | '/contact'
+  to:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/study'
+    | '/study/al'
+    | '/study/al/$stream'
+    | '/study/al/$stream/$subject'
+    | '/study/al/$stream/$subject/past-papers'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/study'
+    | '/study/al'
+    | '/study/al/$stream'
+    | '/study/al/$stream/$subject'
+    | '/study/al/$stream/$subject/past-papers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  StudyRoute: typeof StudyRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/study': {
+      id: '/study'
+      path: '/study'
+      fullPath: '/study'
+      preLoaderRoute: typeof StudyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -82,13 +161,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/study/al': {
+      id: '/study/al'
+      path: '/al'
+      fullPath: '/study/al'
+      preLoaderRoute: typeof StudyAlRouteImport
+      parentRoute: typeof StudyRoute
+    }
+    '/study/al/$stream': {
+      id: '/study/al/$stream'
+      path: '/$stream'
+      fullPath: '/study/al/$stream'
+      preLoaderRoute: typeof StudyAlStreamRouteImport
+      parentRoute: typeof StudyAlRoute
+    }
+    '/study/al/$stream/$subject': {
+      id: '/study/al/$stream/$subject'
+      path: '/$subject'
+      fullPath: '/study/al/$stream/$subject'
+      preLoaderRoute: typeof StudyAlStreamSubjectRouteImport
+      parentRoute: typeof StudyAlStreamRoute
+    }
+    '/study/al/$stream/$subject/past-papers': {
+      id: '/study/al/$stream/$subject/past-papers'
+      path: '/past-papers'
+      fullPath: '/study/al/$stream/$subject/past-papers'
+      preLoaderRoute: typeof StudyAlStreamSubjectPastPapersRouteImport
+      parentRoute: typeof StudyAlStreamSubjectRoute
+    }
   }
 }
+
+interface StudyAlStreamSubjectRouteChildren {
+  StudyAlStreamSubjectPastPapersRoute: typeof StudyAlStreamSubjectPastPapersRoute
+}
+
+const StudyAlStreamSubjectRouteChildren: StudyAlStreamSubjectRouteChildren = {
+  StudyAlStreamSubjectPastPapersRoute: StudyAlStreamSubjectPastPapersRoute,
+}
+
+const StudyAlStreamSubjectRouteWithChildren =
+  StudyAlStreamSubjectRoute._addFileChildren(StudyAlStreamSubjectRouteChildren)
+
+interface StudyAlStreamRouteChildren {
+  StudyAlStreamSubjectRoute: typeof StudyAlStreamSubjectRouteWithChildren
+}
+
+const StudyAlStreamRouteChildren: StudyAlStreamRouteChildren = {
+  StudyAlStreamSubjectRoute: StudyAlStreamSubjectRouteWithChildren,
+}
+
+const StudyAlStreamRouteWithChildren = StudyAlStreamRoute._addFileChildren(
+  StudyAlStreamRouteChildren,
+)
+
+interface StudyAlRouteChildren {
+  StudyAlStreamRoute: typeof StudyAlStreamRouteWithChildren
+}
+
+const StudyAlRouteChildren: StudyAlRouteChildren = {
+  StudyAlStreamRoute: StudyAlStreamRouteWithChildren,
+}
+
+const StudyAlRouteWithChildren =
+  StudyAlRoute._addFileChildren(StudyAlRouteChildren)
+
+interface StudyRouteChildren {
+  StudyAlRoute: typeof StudyAlRouteWithChildren
+}
+
+const StudyRouteChildren: StudyRouteChildren = {
+  StudyAlRoute: StudyAlRouteWithChildren,
+}
+
+const StudyRouteWithChildren = StudyRoute._addFileChildren(StudyRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  StudyRoute: StudyRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
