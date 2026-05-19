@@ -31,6 +31,7 @@ import { Route as StudyAlStreamRouteImport } from './routes/study.al.$stream'
 import { Route as AdminSubjectsSubjectIdRouteImport } from './routes/admin.subjects.$subjectId'
 import { Route as AdminStudentsStudentIdRouteImport } from './routes/admin.students.$studentId'
 import { Route as StudyAlStreamIndexRouteImport } from './routes/study.al.$stream.index'
+import { Route as AdminSubjectsSubjectIdIndexRouteImport } from './routes/admin.subjects.$subjectId.index'
 import { Route as StudyAlStreamSubjectRouteImport } from './routes/study.al.$stream.$subject'
 import { Route as StudyAlStreamSubjectIndexRouteImport } from './routes/study.al.$stream.$subject.index'
 import { Route as StudyAlStreamSubjectPastPapersRouteImport } from './routes/study.al.$stream.$subject.past-papers'
@@ -148,6 +149,12 @@ const StudyAlStreamIndexRoute = StudyAlStreamIndexRouteImport.update({
   path: '/',
   getParentRoute: () => StudyAlStreamRoute,
 } as any)
+const AdminSubjectsSubjectIdIndexRoute =
+  AdminSubjectsSubjectIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AdminSubjectsSubjectIdRoute,
+  } as any)
 const StudyAlStreamSubjectRoute = StudyAlStreamSubjectRouteImport.update({
   id: '/$subject',
   path: '/$subject',
@@ -207,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
   '/study/al/': typeof StudyAlIndexRoute
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/admin/subjects/$subjectId/': typeof AdminSubjectsSubjectIdIndexRoute
   '/study/al/$stream/': typeof StudyAlStreamIndexRoute
   '/admin/subjects/$subjectId/papers/$paperId': typeof AdminSubjectsSubjectIdPapersPaperIdRoute
   '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRouteWithChildren
@@ -230,8 +238,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/study': typeof StudyIndexRoute
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
-  '/admin/subjects/$subjectId': typeof AdminSubjectsSubjectIdRouteWithChildren
   '/study/al': typeof StudyAlIndexRoute
+  '/admin/subjects/$subjectId': typeof AdminSubjectsSubjectIdIndexRoute
   '/study/al/$stream': typeof StudyAlStreamIndexRoute
   '/admin/subjects/$subjectId/papers/$paperId': typeof AdminSubjectsSubjectIdPapersPaperIdRoute
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectIndexRoute
@@ -262,6 +270,7 @@ export interface FileRoutesById {
   '/study/al/$stream': typeof StudyAlStreamRouteWithChildren
   '/study/al/': typeof StudyAlIndexRoute
   '/study/al/$stream/$subject': typeof StudyAlStreamSubjectRouteWithChildren
+  '/admin/subjects/$subjectId/': typeof AdminSubjectsSubjectIdIndexRoute
   '/study/al/$stream/': typeof StudyAlStreamIndexRoute
   '/admin/subjects/$subjectId/papers/$paperId': typeof AdminSubjectsSubjectIdPapersPaperIdRoute
   '/study/al/$stream/$subject/past-papers': typeof StudyAlStreamSubjectPastPapersRouteWithChildren
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/study/al/$stream'
     | '/study/al/'
     | '/study/al/$stream/$subject'
+    | '/admin/subjects/$subjectId/'
     | '/study/al/$stream/'
     | '/admin/subjects/$subjectId/papers/$paperId'
     | '/study/al/$stream/$subject/past-papers'
@@ -317,8 +327,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/study'
     | '/admin/students/$studentId'
-    | '/admin/subjects/$subjectId'
     | '/study/al'
+    | '/admin/subjects/$subjectId'
     | '/study/al/$stream'
     | '/admin/subjects/$subjectId/papers/$paperId'
     | '/study/al/$stream/$subject'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/study/al/$stream'
     | '/study/al/'
     | '/study/al/$stream/$subject'
+    | '/admin/subjects/$subjectId/'
     | '/study/al/$stream/'
     | '/admin/subjects/$subjectId/papers/$paperId'
     | '/study/al/$stream/$subject/past-papers'
@@ -524,6 +535,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudyAlStreamIndexRouteImport
       parentRoute: typeof StudyAlStreamRoute
     }
+    '/admin/subjects/$subjectId/': {
+      id: '/admin/subjects/$subjectId/'
+      path: '/'
+      fullPath: '/admin/subjects/$subjectId/'
+      preLoaderRoute: typeof AdminSubjectsSubjectIdIndexRouteImport
+      parentRoute: typeof AdminSubjectsSubjectIdRoute
+    }
     '/study/al/$stream/$subject': {
       id: '/study/al/$stream/$subject'
       path: '/$subject'
@@ -582,11 +600,13 @@ const AdminStudentsRouteWithChildren = AdminStudentsRoute._addFileChildren(
 )
 
 interface AdminSubjectsSubjectIdRouteChildren {
+  AdminSubjectsSubjectIdIndexRoute: typeof AdminSubjectsSubjectIdIndexRoute
   AdminSubjectsSubjectIdPapersPaperIdRoute: typeof AdminSubjectsSubjectIdPapersPaperIdRoute
 }
 
 const AdminSubjectsSubjectIdRouteChildren: AdminSubjectsSubjectIdRouteChildren =
   {
+    AdminSubjectsSubjectIdIndexRoute: AdminSubjectsSubjectIdIndexRoute,
     AdminSubjectsSubjectIdPapersPaperIdRoute:
       AdminSubjectsSubjectIdPapersPaperIdRoute,
   }
@@ -713,3 +733,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
