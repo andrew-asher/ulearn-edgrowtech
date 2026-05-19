@@ -120,10 +120,10 @@ describe("seeded subjects resolve to mountable admin URLs", () => {
       });
 
       it(`seeded paper id for "${sub.name}" ${year} matches admin paper route shape`, () => {
-        const paperId = `${sub.subjectId}-past-${year}`;
+        const paperId = `${sub.subjectId}__${year}`;
         const url = `/admin/subjects/${sub.subjectId}/papers/${paperId}`;
         expect(url).toMatch(
-          /^\/admin\/subjects\/[a-z0-9_-]+\/papers\/[a-z0-9_-]+-past-\d{4}$/,
+          /^\/admin\/subjects\/[a-z0-9_-]+\/papers\/[a-z0-9_-]+__\d{4}$/,
         );
       });
     }
