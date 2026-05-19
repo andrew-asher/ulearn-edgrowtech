@@ -368,6 +368,11 @@ type Ctx = {
   updateQuestion: (subjectId: string, paperId: string, sectionId: string, qid: string, patch: Partial<AdminQuestion>) => void;
   deleteQuestion: (subjectId: string, paperId: string, sectionId: string, qid: string) => void;
   deleteAllQuestions: (subjectId: string, paperId: string, sectionId: string) => void;
+  // Bulk regenerate sample questions
+  regenerateSampleQuestions: (
+    subjectId?: string,
+    options?: { overwrite?: boolean; paperId?: string },
+  ) => { papers: number; sections: number; questions: number };
 };
 
 const AdminCtx = createContext<Ctx | null>(null);
@@ -570,6 +575,37 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
         mutSection(subjectId, paperId, sectionId, (sec) => {
           sec.questions = [];
         }),
+
+      regenerateSampleQuestions: (subjectId, options) => {
+        const overwrite = options?.overwrite ?? true;
+        const onlyPaperId = options?.paperId;
+        const stats = { papers: 0, sections: 0, questions: 0 };
+        update((s) => {
+          const targets = subjectId
+            ? s.subjects.filter((sub) => sub.id === subjectId)
+            : s.subjects;
+          for (const sub of targets) {
+            for (const sectionKey of ["pastPapers", "modelPapers"] as const) {
+              for (const paper of sub.content[sectionKey].items) {
+                if (onlyPaperId && paper.id !== onlyPaperId) continue;
+                stats.papers += 1;
+                const year = paper.year ?? new Date().getFullYear();
+                for (const sec of paper.sections) {
+                  if (!overwrite && sec.questions.length > 0) continue;
+                  const target = sec.expectedCount ?? sec.questions.length ?? 5;
+                  sec.questions = generateSampleQuestions(
+                    sub.name, sec.title, sec.defaultType, target, year,
+                  );
+                  stats.sections += 1;
+                  stats.questions += sec.questions.length;
+                }
+              }
+            }
+          }
+          return s;
+        });
+        return stats;
+      },
     };
   }, [snap]);
 

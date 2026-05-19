@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Plus, Pencil, BookOpen, ArrowRight } from "lucide-react";
+import { Plus, Pencil, BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/admin/subjects")({ component: SubjectsAdmin });
 
 function SubjectsAdmin() {
-  const { streams, subjects, addSubject, updateSubject, deleteSubject } = useAdminStore();
+  const { streams, subjects, addSubject, updateSubject, deleteSubject, regenerateSampleQuestions } = useAdminStore();
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<AdminSubject | null>(null);
 
@@ -32,20 +32,33 @@ function SubjectsAdmin() {
           <h1 className="mt-1 font-display text-3xl sm:text-4xl font-bold tracking-tight">Manage Subjects</h1>
           <p className="mt-2 text-muted-foreground">Add subjects under a stream. Open a subject to manage its papers, notes and questions.</p>
         </div>
-        <Dialog open={creating} onOpenChange={setCreating}>
-          <DialogTrigger asChild>
-            <Button className="rounded-full" disabled={!available.length}><Plus className="h-4 w-4 mr-1.5" /> Add Subject</Button>
-          </DialogTrigger>
-          <SubjectFormDialog
-            title="Add new subject"
-            streams={available}
-            onSubmit={(d) => {
-              addSubject(d.streamId, d.name, d.description);
-              toast.success("Subject added");
-              setCreating(false);
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            className="rounded-full"
+            onClick={() => {
+              if (!confirm("Regenerate sample questions for every paper across all subjects? Existing questions will be replaced.")) return;
+              const r = regenerateSampleQuestions(undefined, { overwrite: true });
+              toast.success(`Regenerated ${r.questions} questions across ${r.papers} papers`);
             }}
-          />
-        </Dialog>
+          >
+            <Sparkles className="h-4 w-4 mr-1.5" /> Generate sample questions
+          </Button>
+          <Dialog open={creating} onOpenChange={setCreating}>
+            <DialogTrigger asChild>
+              <Button className="rounded-full" disabled={!available.length}><Plus className="h-4 w-4 mr-1.5" /> Add Subject</Button>
+            </DialogTrigger>
+            <SubjectFormDialog
+              title="Add new subject"
+              streams={available}
+              onSubmit={(d) => {
+                addSubject(d.streamId, d.name, d.description);
+                toast.success("Subject added");
+                setCreating(false);
+              }}
+            />
+          </Dialog>
+        </div>
       </div>
 
       <div className="mt-8 space-y-8">
