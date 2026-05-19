@@ -114,6 +114,7 @@ function PapersSection({
   const items = sub.content[section].items;
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<AdminPaper | null>(null);
+  const qCount = (p: AdminPaper) => p.sections.reduce((n, s) => n + s.questions.length, 0);
 
   return (
     <section>
@@ -126,7 +127,7 @@ function PapersSection({
           </DialogTrigger>
           <PaperFormDialog
             title="Add paper"
-            onSubmit={(d) => { addPaper(subjectId, section, d); toast.success("Paper added"); setCreating(false); }}
+            onSubmit={(d) => { addPaper(subjectId, section, { ...d, subjectName: sub.name }); toast.success("Paper added with section blueprint"); setCreating(false); }}
           />
         </Dialog>
       </div>
@@ -154,7 +155,7 @@ function PapersSection({
                 <div className="flex gap-1">
                   <Button size="icon" variant="ghost" onClick={() => setEditing(p)}><Pencil className="h-4 w-4" /></Button>
                   <ConfirmDelete
-                    label={`Delete paper "${p.title}" and its ${p.questions.length} questions?`}
+                    label={`Delete paper "${p.title}" and its ${qCount(p)} questions?`}
                     onConfirm={() => { deletePaper(subjectId, section, p.id); toast.success("Paper deleted"); }}
                   />
                 </div>
@@ -165,11 +166,18 @@ function PapersSection({
                   <Upload className="h-3 w-3" /> {p.fileName}
                 </div>
               )}
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {p.sections.map((s) => (
+                  <Badge key={s.id} variant="outline" className="text-[10px] rounded-full">
+                    {s.title}: {s.questions.length}{s.expectedCount ? `/${s.expectedCount}` : ""}
+                  </Badge>
+                ))}
+              </div>
               <div className="mt-4 flex items-center justify-between">
-                <Badge variant="secondary" className="rounded-full">{p.questions.length} questions</Badge>
+                <Badge variant="secondary" className="rounded-full">{qCount(p)} questions total</Badge>
                 <Button asChild size="sm" variant="outline" className="rounded-full">
                   <Link to="/admin/subjects/$subjectId/papers/$paperId" params={{ subjectId, paperId: p.id }}>
-                    Manage questions <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+                    Manage sections <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                   </Link>
                 </Button>
               </div>
@@ -196,12 +204,13 @@ function PaperFormDialog({
 }: {
   title: string;
   initial?: Partial<AdminPaper>;
-  onSubmit: (d: Omit<AdminPaper, "id" | "questions">) => void;
+  onSubmit: (d: Omit<AdminPaper, "id" | "sections">) => void;
 }) {
+  type PT = "MCQ" | "Structured" | "Essay" | "Mixed";
   const [t, setT] = useState(initial?.title ?? "");
   const [year, setYear] = useState<string>(initial?.year ? String(initial.year) : "");
   const [medium, setMedium] = useState<Medium>(initial?.medium ?? "English");
-  const [paperType, setPaperType] = useState<"MCQ" | "Structured" | "Essay">(initial?.paperType ?? "MCQ");
+  const [paperType, setPaperType] = useState<PT>((initial?.paperType as PT) ?? "Mixed");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [fileName, setFileName] = useState(initial?.fileName ?? "");
 
@@ -209,7 +218,7 @@ function PaperFormDialog({
     <DialogContent className="max-w-lg">
       <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
       <div className="space-y-3">
-        <Field label="Title"><Input value={t} onChange={(e) => setT(e.target.value)} placeholder="e.g. Physics 2024 MCQ" /></Field>
+        <Field label="Title"><Input value={t} onChange={(e) => setT(e.target.value)} placeholder="e.g. Physics 2024" /></Field>
         <div className="grid grid-cols-3 gap-3">
           <Field label="Year"><Input type="number" value={year} onChange={(e) => setYear(e.target.value)} placeholder="2024" /></Field>
           <Field label="Medium">
@@ -223,12 +232,13 @@ function PaperFormDialog({
             </Select>
           </Field>
           <Field label="Type">
-            <Select value={paperType} onValueChange={(v) => setPaperType(v as typeof paperType)}>
+            <Select value={paperType} onValueChange={(v) => setPaperType(v as PT)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="MCQ">MCQ</SelectItem>
-                <SelectItem value="Structured">Structured</SelectItem>
-                <SelectItem value="Essay">Essay</SelectItem>
+                <SelectItem value="Mixed">Mixed (full paper)</SelectItem>
+                <SelectItem value="MCQ">MCQ only</SelectItem>
+                <SelectItem value="Structured">Structured only</SelectItem>
+                <SelectItem value="Essay">Essay only</SelectItem>
               </SelectContent>
             </Select>
           </Field>
@@ -246,6 +256,9 @@ function PaperFormDialog({
             />
           </label>
         </Field>
+        <p className="text-xs text-muted-foreground">
+          New papers are pre-filled with the recommended section blueprint for this subject (e.g. MCQ + Essay, or Pure/Applied Maths Parts A & B). You can edit sections after creating.
+        </p>
       </div>
       <DialogFooter>
         <Button
