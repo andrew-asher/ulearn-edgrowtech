@@ -161,19 +161,15 @@ function SectionPanel({
             <Edit3 className="h-3.5 w-3.5 mr-1.5" /> Rename
           </Button>
           <ConfirmDelete
+            triggerLabel="Clear all"
             label={`Delete all ${section.questions.length} questions in "${section.title}"?`}
             onConfirm={() => { deleteAllQuestions(subjectId, paperId, section.id); toast.success("Cleared section"); }}
-          >
-            <Button size="sm" variant="ghost"><Trash2 className="h-3.5 w-3.5 mr-1.5" /> Clear all</Button>
-          </ConfirmDelete>
+          />
           <ConfirmDelete
+            triggerLabel="Delete section"
             label={`Delete section "${section.title}" and all its questions?`}
             onConfirm={onDeleteSection}
-          >
-            <Button size="sm" variant="ghost" className="text-destructive">
-              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete section
-            </Button>
-          </ConfirmDelete>
+          />
           <Dialog open={creating} onOpenChange={setCreating}>
             <DialogTrigger asChild>
               <Button size="sm" className="rounded-full">
