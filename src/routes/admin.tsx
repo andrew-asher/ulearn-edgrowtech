@@ -50,7 +50,6 @@ function AdminLayout() {
   };
 
   return (
-  return (
     <div className="min-h-screen flex bg-muted/30">
         <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
           <div className="p-5 flex items-center gap-3 border-b border-sidebar-border">
