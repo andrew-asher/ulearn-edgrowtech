@@ -21,7 +21,7 @@ import {
 } from "@/lib/admin-store";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/admin/subjects/$subjectId/")({
+export const Route = createFileRoute("/admin/subjects/$subjectId")({
   component: SubjectDetail,
   notFoundComponent: () => (
     <div className="text-center">
