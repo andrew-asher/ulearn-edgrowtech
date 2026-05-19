@@ -4,16 +4,29 @@ import { streams as seedStreams, papers as seedPapers, questions as seedQuestion
 export type OptionKey = "A" | "B" | "C" | "D" | "E";
 export type Difficulty = "Easy" | "Medium" | "Hard";
 export type Medium = "English" | "Tamil" | "Sinhala";
+export type QuestionType = "MCQ" | "Structured" | "Essay";
 
 export type AdminQuestion = {
   id: string;
   number: number;
+  type: QuestionType;
   text: string;
-  options: { key: OptionKey; text: string }[];
-  correct: OptionKey;
+  imageDataUrl?: string;
+  options?: { key: OptionKey; text: string }[];
+  correct?: OptionKey;
+  modelAnswer?: string;
   explanation: string;
+  marks?: number;
   topic: string;
   difficulty: Difficulty;
+};
+
+export type PaperSection = {
+  id: string;
+  title: string;
+  defaultType: QuestionType;
+  expectedCount?: number;
+  questions: AdminQuestion[];
 };
 
 export type AdminPaper = {
@@ -21,10 +34,10 @@ export type AdminPaper = {
   title: string;
   year?: number;
   medium?: Medium;
-  paperType?: "MCQ" | "Structured" | "Essay";
+  paperType?: "MCQ" | "Structured" | "Essay" | "Mixed";
   fileName?: string;
   description?: string;
-  questions: AdminQuestion[];
+  sections: PaperSection[];
 };
 
 export type AdminNote = {
@@ -66,7 +79,26 @@ type Snapshot = {
   subjects: AdminSubject[];
 };
 
-const STORAGE_KEY = "edgrow-admin-content-v2";
+const STORAGE_KEY = "edgrow-admin-content-v4";
+const uid = () => Math.random().toString(36).slice(2, 10);
+const slugify = (s: string) =>
+  s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+export function blueprintForSubject(name: string): PaperSection[] {
+  const lower = name.toLowerCase();
+  if (lower.includes("combined") && lower.includes("math")) {
+    return [
+      { id: uid(), title: "Pure Mathematics — Part A", defaultType: "Structured", expectedCount: 10, questions: [] },
+      { id: uid(), title: "Pure Mathematics — Part B", defaultType: "Essay", expectedCount: 5, questions: [] },
+      { id: uid(), title: "Applied Mathematics — Part A", defaultType: "Structured", expectedCount: 10, questions: [] },
+      { id: uid(), title: "Applied Mathematics — Part B", defaultType: "Essay", expectedCount: 5, questions: [] },
+    ];
+  }
+  return [
+    { id: uid(), title: "MCQ", defaultType: "MCQ", expectedCount: 50, questions: [] },
+    { id: uid(), title: "Essay", defaultType: "Essay", expectedCount: 10, questions: [] },
+  ];
+}
 
 function emptyContent(name: string): SubjectContent {
   return {
@@ -97,27 +129,35 @@ function buildSeed(): Snapshot {
       const papersForSubject = seedPapers.filter(
         (p) => p.subject.toLowerCase() === subName.toLowerCase(),
       );
-      content.pastPapers.items = papersForSubject.map((p) => ({
-        id: p.id,
-        title: `${p.subject} ${p.year} ${p.paperType}`,
-        year: p.year,
-        medium: p.medium,
-        paperType: p.paperType,
-        fileName: p.downloadUrl.split("/").pop(),
-        description: `${p.paperType} paper · ${p.medium} medium`,
-        questions: seedQuestions
+      content.pastPapers.items = papersForSubject.map((p) => {
+        const sections = blueprintForSubject(subName);
+        // Drop the seeded MCQ data into the first MCQ-like section
+        const target = sections.find((sec) => sec.defaultType === "MCQ") ?? sections[0];
+        const seeded = seedQuestions
           .filter((q) => q.paperId === p.id)
-          .map((q) => ({
+          .map((q, i) => ({
             id: q.id,
-            number: q.number,
+            number: i + 1,
+            type: "MCQ" as QuestionType,
             text: q.text,
             options: q.options,
             correct: q.correct,
             explanation: q.explanation,
             topic: q.topic,
             difficulty: q.difficulty,
-          })),
-      }));
+          }));
+        target.questions = seeded;
+        return {
+          id: p.id,
+          title: `${p.subject} ${p.year} ${p.paperType}`,
+          year: p.year,
+          medium: p.medium,
+          paperType: p.paperType,
+          fileName: p.downloadUrl.split("/").pop(),
+          description: `${p.paperType} paper · ${p.medium} medium`,
+          sections,
+        };
+      });
       subjects.push({
         id,
         streamId: s.id,
@@ -151,10 +191,6 @@ function load(): Snapshot {
   }
 }
 
-const uid = () => Math.random().toString(36).slice(2, 10);
-const slugify = (s: string) =>
-  s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
 type Ctx = {
   streams: AdminStream[];
   subjects: AdminSubject[];
@@ -166,27 +202,35 @@ type Ctx = {
   // Subjects
   subjectsByStream: (streamId: string) => AdminSubject[];
   getSubject: (id: string) => AdminSubject | undefined;
+  getSubjectBySlug: (streamId: string, slug: string) => AdminSubject | undefined;
   addSubject: (streamId: string, name: string, description?: string) => void;
   updateSubject: (id: string, patch: Partial<Pick<AdminSubject, "name" | "description">>) => void;
   deleteSubject: (id: string) => void;
-  // Section heading
+  // Subject section heading
   updateSection: (
     subjectId: string,
     section: keyof SubjectContent,
     patch: { heading?: string; description?: string },
   ) => void;
-  // Papers / Notes items
-  addPaper: (subjectId: string, section: "pastPapers" | "modelPapers", data: Omit<AdminPaper, "id" | "questions">) => void;
+  // Papers
+  addPaper: (subjectId: string, section: "pastPapers" | "modelPapers", data: Omit<AdminPaper, "id" | "sections"> & { subjectName: string }) => void;
   updatePaper: (subjectId: string, section: "pastPapers" | "modelPapers", paperId: string, patch: Partial<AdminPaper>) => void;
   deletePaper: (subjectId: string, section: "pastPapers" | "modelPapers", paperId: string) => void;
-  getPaper: (subjectId: string, paperId: string) => { paper: AdminPaper; section: "pastPapers" | "modelPapers" } | undefined;
+  getPaper: (subjectId: string, paperId: string) => { paper: AdminPaper; section: "pastPapers" | "modelPapers"; subject: AdminSubject } | undefined;
+  findPaper: (paperId: string) => { paper: AdminPaper; subject: AdminSubject } | undefined;
+  // Paper sections
+  addPaperSection: (subjectId: string, paperId: string, data: Omit<PaperSection, "id" | "questions">) => void;
+  updatePaperSection: (subjectId: string, paperId: string, sectionId: string, patch: Partial<Omit<PaperSection, "id" | "questions">>) => void;
+  deletePaperSection: (subjectId: string, paperId: string, sectionId: string) => void;
+  // Notes
   addNote: (subjectId: string, data: Omit<AdminNote, "id">) => void;
   updateNote: (subjectId: string, noteId: string, patch: Partial<AdminNote>) => void;
   deleteNote: (subjectId: string, noteId: string) => void;
-  // Questions
-  addQuestion: (subjectId: string, paperId: string, data: Omit<AdminQuestion, "id" | "number">) => void;
-  updateQuestion: (subjectId: string, paperId: string, qid: string, patch: Partial<AdminQuestion>) => void;
-  deleteQuestion: (subjectId: string, paperId: string, qid: string) => void;
+  // Questions (per section)
+  addQuestion: (subjectId: string, paperId: string, sectionId: string, data: Omit<AdminQuestion, "id" | "number">) => void;
+  updateQuestion: (subjectId: string, paperId: string, sectionId: string, qid: string, patch: Partial<AdminQuestion>) => void;
+  deleteQuestion: (subjectId: string, paperId: string, sectionId: string, qid: string) => void;
+  deleteAllQuestions: (subjectId: string, paperId: string, sectionId: string) => void;
 };
 
 const AdminCtx = createContext<Ctx | null>(null);
@@ -230,6 +274,17 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
         }
       });
 
+    const mutSection = (
+      subjectId: string,
+      paperId: string,
+      sectionId: string,
+      fn: (sec: PaperSection) => void,
+    ) =>
+      mutPaper(subjectId, paperId, (p) => {
+        const sec = p.sections.find((x) => x.id === sectionId);
+        if (sec) fn(sec);
+      });
+
     return {
       streams: snap.streams,
       subjects: snap.subjects,
@@ -255,6 +310,8 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
 
       subjectsByStream: (streamId) => snap.subjects.filter((x) => x.streamId === streamId),
       getSubject: (id) => snap.subjects.find((x) => x.id === id),
+      getSubjectBySlug: (streamId, slug) =>
+        snap.subjects.find((x) => x.streamId === streamId && subjectSlug(x.name) === slug),
       addSubject: (streamId, name, description) =>
         update((s) => {
           const id = `${streamId}__${slugify(name)}__${uid()}`;
@@ -286,7 +343,12 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
 
       addPaper: (subjectId, section, data) =>
         mutSubject(subjectId, (sub) => {
-          sub.content[section].items.push({ id: uid(), questions: [], ...data });
+          const { subjectName, ...rest } = data;
+          sub.content[section].items.push({
+            id: uid(),
+            sections: blueprintForSubject(subjectName || sub.name),
+            ...rest,
+          });
         }),
       updatePaper: (subjectId, section, paperId, patch) =>
         mutSubject(subjectId, (sub) => {
@@ -302,10 +364,33 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
         if (!sub) return undefined;
         for (const section of ["pastPapers", "modelPapers"] as const) {
           const p = sub.content[section].items.find((x) => x.id === paperId);
-          if (p) return { paper: p, section };
+          if (p) return { paper: p, section, subject: sub };
         }
         return undefined;
       },
+      findPaper: (paperId) => {
+        for (const sub of snap.subjects) {
+          for (const section of ["pastPapers", "modelPapers"] as const) {
+            const p = sub.content[section].items.find((x) => x.id === paperId);
+            if (p) return { paper: p, subject: sub };
+          }
+        }
+        return undefined;
+      },
+
+      addPaperSection: (subjectId, paperId, data) =>
+        mutPaper(subjectId, paperId, (p) => {
+          p.sections.push({ id: uid(), questions: [], ...data });
+        }),
+      updatePaperSection: (subjectId, paperId, sectionId, patch) =>
+        mutPaper(subjectId, paperId, (p) => {
+          const sec = p.sections.find((x) => x.id === sectionId);
+          if (sec) Object.assign(sec, patch);
+        }),
+      deletePaperSection: (subjectId, paperId, sectionId) =>
+        mutPaper(subjectId, paperId, (p) => {
+          p.sections = p.sections.filter((x) => x.id !== sectionId);
+        }),
 
       addNote: (subjectId, data) =>
         mutSubject(subjectId, (sub) => {
@@ -321,21 +406,25 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
           sub.content.notes.items = sub.content.notes.items.filter((x) => x.id !== noteId);
         }),
 
-      addQuestion: (subjectId, paperId, data) =>
-        mutPaper(subjectId, paperId, (p) => {
-          const number = p.questions.length
-            ? Math.max(...p.questions.map((q) => q.number)) + 1
+      addQuestion: (subjectId, paperId, sectionId, data) =>
+        mutSection(subjectId, paperId, sectionId, (sec) => {
+          const number = sec.questions.length
+            ? Math.max(...sec.questions.map((q) => q.number)) + 1
             : 1;
-          p.questions.push({ id: uid(), number, ...data });
+          sec.questions.push({ id: uid(), number, ...data });
         }),
-      updateQuestion: (subjectId, paperId, qid, patch) =>
-        mutPaper(subjectId, paperId, (p) => {
-          const q = p.questions.find((x) => x.id === qid);
+      updateQuestion: (subjectId, paperId, sectionId, qid, patch) =>
+        mutSection(subjectId, paperId, sectionId, (sec) => {
+          const q = sec.questions.find((x) => x.id === qid);
           if (q) Object.assign(q, patch);
         }),
-      deleteQuestion: (subjectId, paperId, qid) =>
-        mutPaper(subjectId, paperId, (p) => {
-          p.questions = p.questions.filter((x) => x.id !== qid);
+      deleteQuestion: (subjectId, paperId, sectionId, qid) =>
+        mutSection(subjectId, paperId, sectionId, (sec) => {
+          sec.questions = sec.questions.filter((x) => x.id !== qid);
+        }),
+      deleteAllQuestions: (subjectId, paperId, sectionId) =>
+        mutSection(subjectId, paperId, sectionId, (sec) => {
+          sec.questions = [];
         }),
     };
   }, [snap]);
