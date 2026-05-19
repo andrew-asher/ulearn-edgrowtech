@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/admin/subjects")({ component: SubjectsAdmin });
 
 function SubjectsAdmin() {
-  const { streams, subjects, addSubject, updateSubject, deleteSubject } = useAdminStore();
+  const { streams, subjects, addSubject, updateSubject, deleteSubject, regenerateSampleQuestions } = useAdminStore();
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<AdminSubject | null>(null);
 
