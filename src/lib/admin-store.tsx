@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { streams as seedStreams, subjectSlug } from "@/lib/mock-data";
+import { generateSampleQuestions } from "@/lib/sample-questions";
 
 export type OptionKey = "A" | "B" | "C" | "D" | "E";
 export type Difficulty = "Easy" | "Medium" | "Hard";
@@ -79,7 +80,7 @@ type Snapshot = {
   subjects: AdminSubject[];
 };
 
-const STORAGE_KEY = "edgrow-admin-content-v6";
+const STORAGE_KEY = "edgrow-admin-content-v7";
 const uid = () => Math.random().toString(36).slice(2, 10);
 const slugify = (s: string) =>
   s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -101,36 +102,10 @@ export function blueprintForSubject(name: string): PaperSection[] {
   ];
 }
 
-function fillSection(sec: PaperSection, subject: string): PaperSection {
+function fillSection(sec: PaperSection, subject: string, year: number): PaperSection {
   if (sec.questions.length > 0) return sec;
   const target = sec.expectedCount ?? 5;
-  const qs: AdminQuestion[] = [];
-  for (let i = 1; i <= target; i++) {
-    if (sec.defaultType === "MCQ") {
-      qs.push({
-        id: uid(), number: i, type: "MCQ",
-        text: `${subject} — ${sec.title} Q${i}: Sample multiple-choice question. Replace with the real past-paper text.`,
-        options: [
-          { key: "A", text: "Option A" }, { key: "B", text: "Option B" },
-          { key: "C", text: "Option C" }, { key: "D", text: "Option D" },
-          { key: "E", text: "Option E" },
-        ],
-        correct: (["A","B","C","D","E"] as OptionKey[])[i % 5],
-        explanation: "Replace with the worked solution for this MCQ.",
-        topic: "General", difficulty: "Medium", marks: 1,
-      });
-    } else {
-      qs.push({
-        id: uid(), number: i, type: sec.defaultType,
-        text: `${subject} — ${sec.title} Q${i}: Sample ${sec.defaultType.toLowerCase()} question. Replace with the real prompt.`,
-        modelAnswer: "Replace with the model answer / marking scheme.",
-        explanation: "Replace with the worked solution and examiner notes.",
-        topic: "General", difficulty: "Medium",
-        marks: sec.defaultType === "Essay" ? 15 : 10,
-      });
-    }
-  }
-  sec.questions = qs;
+  sec.questions = generateSampleQuestions(subject, sec.title, sec.defaultType, target, year);
   return sec;
 }
 
@@ -162,9 +137,9 @@ function buildSeed(): Snapshot {
       const id = `${s.id}__${subjectSlug(subName)}`;
       const content = emptyContent(subName);
       // Seed a 2023 paper with full blueprint, pre-filled with placeholder questions
-      const seedYears = [2023, 2022];
+      const seedYears = [2023, 2022, 2021];
       content.pastPapers.items = seedYears.map((year) => {
-        const sections = blueprintForSubject(subName).map((sec) => fillSection(sec, subName));
+        const sections = blueprintForSubject(subName).map((sec) => fillSection(sec, subName, year));
         return {
           id: `${id}__${year}`,
           title: `${subName} ${year}`,
