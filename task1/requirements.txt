@@ -1,0 +1,4 @@
+pymupdf
+Pillow
+opencv-python
+pdf2image
